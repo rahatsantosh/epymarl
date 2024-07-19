@@ -274,5 +274,8 @@ def args_sanity_check(config, _log):
         config["test_nepisode"] = (
             config["test_nepisode"] // config["batch_size_run"]
         ) * config["batch_size_run"]
+    
+    if config["opponent_modelling"] is not None:
+        config["opponent_modelling"] = config["opponent_modelling"].strip("[]").split(",")
 
     return config
