@@ -72,7 +72,7 @@ def run(_run, _config, _log):
     print("Stopping all threads")
     for t in threading.enumerate():
         if t.name != "MainThread":
-            print("Thread {} is alive! Is daemon: {}".format(t.name, t.daemon))
+            print(f"Thread {t.name} is alive! Is daemon: {t.daemon}")
             t.join(timeout=1)
             print("Thread joined")
 
@@ -92,7 +92,7 @@ def evaluate_sequential(args, runner):
     runner.close_env()
 
 
-def run_sequential(args, logger):
+def run_sequential(args, logger):  # sourcery skip: extract-method, low-code-quality
     # Init runner so we can get env info
     runner = r_REGISTRY[args.runner](args=args, logger=logger)
 
@@ -113,12 +113,12 @@ def run_sequential(args, logger):
             "dtype": th.int,
         },
         "terminated": {"vshape": (1,), "dtype": th.uint8},
+        "reward": (
+            {"vshape": (1,)}
+            if args.common_reward
+            else {"vshape": (args.n_agents,)}
+        ),
     }
-    # For individual rewards in gymmai reward is of shape (1, n_agents)
-    if args.common_reward:
-        scheme["reward"] = {"vshape": (1,)}
-    else:
-        scheme["reward"] = {"vshape": (args.n_agents,)}
     groups = {"agents": args.n_agents}
     preprocess = {"actions": ("actions_onehot", [OneHot(out_dim=args.n_actions)])}
 
@@ -149,7 +149,7 @@ def run_sequential(args, logger):
 
         if not os.path.isdir(args.checkpoint_path):
             logger.console_logger.info(
-                "Checkpoint directiory {} doesn't exist".format(args.checkpoint_path)
+                f"Checkpoint directiory {args.checkpoint_path} doesn't exist"
             )
             return
 
@@ -169,7 +169,7 @@ def run_sequential(args, logger):
 
         model_path = os.path.join(args.checkpoint_path, str(timestep_to_load))
 
-        logger.console_logger.info("Loading model from {}".format(model_path))
+        logger.console_logger.info(f"Loading model from {model_path}")
         learner.load_models(model_path)
         runner.t_env = timestep_to_load
 
@@ -190,7 +190,7 @@ def run_sequential(args, logger):
     start_time = time.time()
     last_time = start_time
 
-    logger.console_logger.info("Beginning training for {} timesteps".format(args.t_max))
+    logger.console_logger.info(f"Beginning training for {args.t_max} timesteps")
 
     while runner.t_env <= args.t_max:
         # Run for a whole episode at a time
@@ -212,14 +212,9 @@ def run_sequential(args, logger):
         # Execute test runs once in a while
         n_test_runs = max(1, args.test_nepisode // runner.batch_size)
         if (runner.t_env - last_test_T) / args.test_interval >= 1.0:
+            logger.console_logger.info(f"t_env: {runner.t_env} / {args.t_max}")
             logger.console_logger.info(
-                "t_env: {} / {}".format(runner.t_env, args.t_max)
-            )
-            logger.console_logger.info(
-                "Estimated time left: {}. Time passed: {}".format(
-                    time_left(last_time, last_test_T, runner.t_env, args.t_max),
-                    time_str(time.time() - start_time),
-                )
+                f"Estimated time left: {time_left(last_time, last_test_T, runner.t_env, args.t_max)}. Time passed: {time_str(time.time() - start_time)}"
             )
             last_time = time.time()
 
@@ -237,7 +232,7 @@ def run_sequential(args, logger):
             )
             # "results/models/{}".format(unique_token)
             os.makedirs(save_path, exist_ok=True)
-            logger.console_logger.info("Saving models to {}".format(save_path))
+            logger.console_logger.info(f"Saving models to {save_path}")
 
             # learner should handle saving/loading -- delegate actor save/load to mac,
             # use appropriate filenames to do critics, optimizer states

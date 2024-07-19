@@ -50,10 +50,12 @@ class NonSharedMAC:
         self.agent.cuda()
 
     def save_models(self, path):
-        th.save(self.agent.state_dict(), "{}/agent.th".format(path))
+        th.save(self.agent.state_dict(), f"{path}/agent.th")
 
     def load_models(self, path):
-        self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
+        self.agent.load_state_dict(
+            th.load(f"{path}/agent.th", map_location=lambda storage, loc: storage)
+        )
 
     def _build_agents(self, input_shape):
         self.agent = agent_REGISTRY[self.args.agent](input_shape, self.args)
@@ -62,8 +64,7 @@ class NonSharedMAC:
         # Assumes homogenous agents with flat observations.
         # Other MACs might want to e.g. delegate building inputs to each agent
         bs = batch.batch_size
-        inputs = []
-        inputs.append(batch["obs"][:, t])  # b1av
+        inputs = [batch["obs"][:, t]]
         if self.args.obs_last_action:
             if t == 0:
                 inputs.append(th.zeros_like(batch["actions_onehot"][:, t]))
