@@ -92,7 +92,7 @@ def evaluate_sequential(args, runner):
     runner.close_env()
 
 
-def run_sequential(args, logger):  # sourcery skip: extract-method, low-code-quality
+def run_sequential(args, logger):  # sourcery skip: extract-method, low-code-quality, move-assign
     # Init runner so we can get env info
     runner = r_REGISTRY[args.runner](args=args, logger=logger)
 
