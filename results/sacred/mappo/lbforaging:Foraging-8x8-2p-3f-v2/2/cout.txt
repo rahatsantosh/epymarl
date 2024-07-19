@@ -1,0 +1,110 @@
+[INFO 21:01:57] pymarl Running command 'my_main'
+[INFO 21:01:57] pymarl Started run with ID "2"
+[DEBUG 21:01:57] pymarl Starting Heartbeat
+[DEBUG 21:01:57] my_main Started
+[WARNING 21:01:57] my_main CUDA flag use_cuda was switched OFF automatically because no CUDA devices are available!
+[INFO 21:01:57] my_main Experiment Parameters:
+[INFO 21:01:57] my_main 
+
+{   'action_selector': 'soft_policies',
+    'add_value_last_step': True,
+    'agent': 'rnn',
+    'agent_output_type': 'pi_logits',
+    'batch_size': 10,
+    'batch_size_run': 10,
+    'buffer_cpu_only': True,
+    'buffer_size': 10,
+    'checkpoint_path': '',
+    'common_reward': True,
+    'critic_type': 'cv_critic',
+    'entropy_coef': 0.001,
+    'env': 'gymma',
+    'env_args': {   'key': 'lbforaging:Foraging-8x8-2p-3f-v2',
+                    'pretrained_wrapper': None,
+                    'seed': 75964670,
+                    'time_limit': 25},
+    'epochs': 4,
+    'eps_clip': 0.2,
+    'evaluate': False,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hidden_dim': 128,
+    'hypergroup': None,
+    'label': 'default_label',
+    'learner': 'ppo_learner',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 50000,
+    'lr': 0.0003,
+    'mac': 'basic_mac',
+    'mask_before_softmax': True,
+    'name': 'mappo',
+    'obs_agent_id': True,
+    'obs_individual_obs': False,
+    'obs_last_action': False,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'q_nstep': 5,
+    'render': False,
+    'repeat_id': 1,
+    'reward_scalarisation': 'sum',
+    'runner': 'parallel',
+    'runner_log_interval': 10000,
+    'save_model': False,
+    'save_model_interval': 50000,
+    'save_replay': False,
+    'seed': 75964670,
+    'standardise_returns': False,
+    'standardise_rewards': True,
+    't_max': 20050000,
+    'target_update_interval_or_tau': 0.01,
+    'test_greedy': True,
+    'test_interval': 50000,
+    'test_nepisode': 100,
+    'use_cuda': False,
+    'use_rnn': True,
+    'use_tensorboard': False,
+    'use_wandb': False,
+    'wandb_mode': 'offline',
+    'wandb_project': None,
+    'wandb_save_model': False,
+    'wandb_team': None}
+
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+[INFO 21:01:59] my_main Beginning training for 20050000 timesteps
+[INFO 21:02:00] my_main t_env: 250 / 20050000
+[INFO 21:02:00] my_main Estimated time left: 1 minutes, 36 seconds. Time passed: 0 seconds
+[INFO 21:02:49] my_main Recent Stats | t_env:      50111 | Episode:     2140
+advantage_mean:           -0.1869	agent_grad_norm:           0.7901	critic_grad_norm:          5.2875	critic_loss:               3.7406
+ep_length_mean:           24.1209	pg_loss:                   0.1698	pi_max:                    0.5273	q_taken_mean:              0.1621
+return_mean:               0.4197	return_std:                0.2937	target_mean:              -0.0247	td_error_abs:              1.4561
+test_ep_length_mean:      25.0000	test_return_mean:          0.2853	test_return_std:           0.2449	
+[INFO 21:02:49] my_main t_env: 50332 / 20050000
+[INFO 21:02:49] my_main Estimated time left: 5 hours, 31 minutes, 4 seconds. Time passed: 49 seconds
+[INFO 21:03:49] my_main Recent Stats | t_env:     100174 | Episode:     4730
+advantage_mean:           -0.0436	agent_grad_norm:           1.2734	critic_grad_norm:          7.9795	critic_loss:               4.0215
+ep_length_mean:           19.9375	pg_loss:                   0.0227	pi_max:                    0.6248	q_taken_mean:              1.6569
+return_mean:               0.7722	return_std:                0.3171	target_mean:               1.6133	td_error_abs:              1.7538
+test_ep_length_mean:      23.3350	test_return_mean:          0.4726	test_return_std:           0.3026	
+[INFO 21:03:49] my_main t_env: 100367 / 20050000
+[INFO 21:03:49] my_main Estimated time left: 6 hours, 35 minutes, 25 seconds. Time passed: 1 minutes, 49 seconds

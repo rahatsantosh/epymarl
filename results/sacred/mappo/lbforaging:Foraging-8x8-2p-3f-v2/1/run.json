@@ -1,0 +1,134 @@
+{
+  "artifacts": [],
+  "command": "my_main",
+  "experiment": {
+    "base_dir": "/mnt/Study/Edinburgh/Dissertation/Code/PyMARL_Fallback/epymarl/src",
+    "dependencies": [
+      "numpy==1.24.4",
+      "PyYAML==5.3.1",
+      "sacred==0.8.5",
+      "torch==2.3.1"
+    ],
+    "mainfile": "main.py",
+    "name": "pymarl",
+    "repositories": [
+      {
+        "commit": "3253d0999b938c51d55b489396c14def09c8a915",
+        "dirty": false,
+        "url": "https://github.com/uoe-agents/epymarl.git"
+      },
+      {
+        "commit": "3253d0999b938c51d55b489396c14def09c8a915",
+        "dirty": false,
+        "url": "https://github.com/uoe-agents/epymarl.git"
+      },
+      {
+        "commit": "3253d0999b938c51d55b489396c14def09c8a915",
+        "dirty": false,
+        "url": "https://github.com/uoe-agents/epymarl.git"
+      }
+    ],
+    "sources": [
+      [
+        "main.py",
+        "_sources/main_fe63ec197d7d45234cbb0f3693d04d4c.py"
+      ],
+      [
+        "run.py",
+        "_sources/run_26065774bc37be3b53a2389cece7c645.py"
+      ],
+      [
+        "utils/logging.py",
+        "_sources/logging_c5e4eb72527526b53c5189a8a6e9808d.py"
+      ]
+    ]
+  },
+  "fail_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/sacred/config/captured_function.py\", line 42, in captured_function\n    result = wrapped(*args, **kwargs)\n",
+    "  File \"src/main.py\", line 38, in my_main\n    run(_run, config, _log)\n",
+    "  File \"/mnt/Study/Edinburgh/Dissertation/Code/PyMARL_Fallback/epymarl/src/run.py\", line 67, in run\n    run_sequential(args=args, logger=logger)\n",
+    "  File \"/mnt/Study/Edinburgh/Dissertation/Code/PyMARL_Fallback/epymarl/src/run.py\", line 141, in run_sequential\n    learner = le_REGISTRY[args.learner](mac, buffer.scheme, logger, args)\n",
+    "  File \"/mnt/Study/Edinburgh/Dissertation/Code/PyMARL_Fallback/epymarl/src/learners/ppo_learner.py\", line 22, in __init__\n    self.agent_optimiser = Adam(params=self.agent_params, lr=args.lr)\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/optim/adam.py\", line 45, in __init__\n    super().__init__(params, defaults)\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/optim/optimizer.py\", line 284, in __init__\n    self.add_param_group(cast(dict, param_group))\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_compile.py\", line 22, in inner\n    import torch._dynamo\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_dynamo/__init__.py\", line 2, in <module>\n    from . import convert_frame, eval_frame, resume_execution\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_dynamo/convert_frame.py\", line 40, in <module>\n    from . import config, exc, trace_rules\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_dynamo/trace_rules.py\", line 50, in <module>\n    from .variables import (\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_dynamo/variables/__init__.py\", line 34, in <module>\n    from .higher_order_ops import (\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/_dynamo/variables/higher_order_ops.py\", line 13, in <module>\n    import torch.onnx.operators\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/onnx/__init__.py\", line 59, in <module>\n    from ._internal.onnxruntime import (\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/torch/onnx/_internal/onnxruntime.py\", line 36, in <module>\n    import onnx\n",
+    "  File \"/home/kitoo/.local/lib/python3.8/site-packages/onnx/__init__.py\", line 18, in <module>\n    import onnx.helper  # noqa\n",
+    "  File \"/home/kitoo/.local/lib/python3.8/site-packages/onnx/helper.py\", line 15, in <module>\n    from onnx import mapping\n",
+    "  File \"/home/kitoo/.local/lib/python3.8/site-packages/onnx/mapping.py\", line 25, in <module>\n    int(TensorProto.STRING): np.dtype(np.object)\n",
+    "  File \"/home/kitoo/anaconda3/envs/ipp2/lib/python3.8/site-packages/numpy/__init__.py\", line 305, in __getattr__\n    raise AttributeError(__former_attrs__[attr])\n",
+    "AttributeError: module 'numpy' has no attribute 'object'.\n`np.object` was a deprecated alias for the builtin `object`. To avoid this error in existing code, use `object` by itself. Doing this will not modify any behavior and is safe. \nThe aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:\n    https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations\n"
+  ],
+  "heartbeat": "2024-07-18T20:01:12.369495",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz",
+    "gpus": {
+      "driver_version": "470.161.03",
+      "gpus": [
+        {
+          "model": "NVIDIA GeForce GTX 1650",
+          "persistence_mode": false,
+          "total_memory": 3911
+        }
+      ]
+    },
+    "hostname": "pop-os",
+    "os": [
+      "Linux",
+      "Linux-6.0.12-76060012-generic-x86_64-with-glibc2.17"
+    ],
+    "python_version": "3.8.19"
+  },
+  "meta": {
+    "command": "my_main",
+    "config_updates": {
+      "env_args": {
+        "key": "lbforaging:Foraging-8x8-2p-3f-v2",
+        "time_limit": 25
+      }
+    },
+    "named_configs": [],
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--id": null,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [
+        "env_args.time_limit=25",
+        "env_args.key=lbforaging:Foraging-8x8-2p-3f-v2"
+      ],
+      "help": false,
+      "with": true
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2024-07-18T20:01:07.841112",
+  "status": "FAILED",
+  "stop_time": "2024-07-18T20:01:12.376178"
+}
