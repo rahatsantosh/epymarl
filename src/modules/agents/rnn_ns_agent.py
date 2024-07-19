@@ -5,10 +5,11 @@ from modules.agents.rnn_agent import RNNAgent
 
 
 class RNNNSAgent(nn.Module):
-    def __init__(self, input_shape, args):
+    def __init__(self, input_shape, args, latent_dims=None):
         super(RNNNSAgent, self).__init__()
         self.args = args
         self.n_agents = args.n_agents
+        input_shape = input_shape if latent_dims is None else input_shape+latent_dims
         self.input_shape = input_shape
         self.agents = th.nn.ModuleList(
             [RNNAgent(input_shape, args) for _ in range(self.n_agents)]
