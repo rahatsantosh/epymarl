@@ -82,7 +82,7 @@ class BasicMAC:
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
         # NOTE: Opponent Modelling Integration
         if self.opponent_model is not None:
-            opponent_encoded = self.opponent_model.encode(inputs).detach()
+            opponent_encoded = self.opponent_model.encoder(inputs).detach()
             inputs = th.cat([inputs, opponent_encoded], dim=1)
         return inputs
 

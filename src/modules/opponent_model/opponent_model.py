@@ -105,7 +105,7 @@ class OpponentModel(nn.Module):
         )
 
         self.decode_head1 = nn.Sequential(nn.Linear(64, int(reconstruction_dims[0])))
-        self.decode_head2 = nn.Sequential(nn.Linear(64, int(reconstruction_dims[1]), nn.Sigmoid()))
+        self.decode_head2 = nn.Sequential(nn.Linear(64, int(reconstruction_dims[1])))
         # self.decode_head3 = nn.Sequential(nn.Linear(64, int(reconstruction_dims[2])))
 
         self.criterion = nn.HuberLoss()
@@ -125,10 +125,12 @@ class OpponentModel(nn.Module):
     
     def batch_encoder(self, batch, t):
         x = self._build_inputs(batch, t)
-        return self.encode(x)
+        x_shape = list(x.shape)
+        return self.encode(x.view(-1, x_shape[-1])).view(x_shape[0], x_shape[1], x_shape[2], -1)
     
     def _build_inputs(self, batch, t):
         bs = batch.batch_size
+        episode_size = batch["obs"].shape[1]
         inputs = [batch["obs"][:, t]]
         if self.args.obs_last_action:
             if t == 0:
@@ -136,9 +138,9 @@ class OpponentModel(nn.Module):
             else:
                 inputs.append(batch["actions_onehot"][:, t-1])
         if self.args.obs_agent_id:
-            inputs.append(torch.eye(self.args.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
+            inputs.append(torch.eye(self.args.n_agents, device=batch.device).unsqueeze(0).expand(bs, episode_size, -1, -1))
 
-        inputs = torch.cat([x.reshape(bs*self.args.n_agents, -1) for x in inputs], dim=1)
+        inputs = torch.cat(inputs, dim=-1)
         return inputs
     
     def _get_input_shape(self, scheme, args):
