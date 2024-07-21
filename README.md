@@ -1,5 +1,9 @@
 # Extended Python MARL framework - EPyMARL
 
+```
+python3 src/main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key="mpe:SimpleSpread-v0" opponent_modelling=[action,observation] latent_dims=0
+```
+
 EPyMARL is  an extension of [PyMARL](https://github.com/oxwhirl/pymarl), and includes
 - **New!** Support for training in environments with individual rewards for all agents (for all algorithms that support such settings)
 - **New!** Support for logging to [weights and biases (W&B)](https://wandb.ai/)

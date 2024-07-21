@@ -1,5 +1,6 @@
 from modules.agents import REGISTRY as agent_REGISTRY
 from components.action_selectors import REGISTRY as action_REGISTRY
+from modules.opponent_model.opponent_model import OpponentModel
 import torch as th
 
 
@@ -11,6 +12,9 @@ class BasicMAC:
         input_shape = self._get_input_shape(scheme)
         self._build_agents(input_shape)
         self.agent_output_type = args.agent_output_type
+
+        if args.opponent_modelling is not None: self.opponent_model = OpponentModel(scheme, args)
+        else: self.opponent_model = None
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
 
@@ -76,6 +80,10 @@ class BasicMAC:
             inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            opponent_encoded = self.opponent_model.encode(inputs).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=1)
         return inputs
 
     def _get_input_shape(self, scheme):
