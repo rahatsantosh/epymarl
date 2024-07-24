@@ -1,0 +1,15 @@
+General:
+You add default config values for opponent modelling in the main.py: https://github.com/rahatsantosh/epymarl/blob/main/src/main.py#L96. You should move those values instead to the src/configs/default.yaml. [X]
+
+OpponentModel architecture:
+You use the names decode_head1/2 and head1/2 for modules and outputs but it's not clear which one refers to what. It seems you use head1 fixed for obs reconstruction and head2 for action reconstruction? I think you should name those respectively so it's easier to read. E.g. decode_obs_head and decode_act_head [X]
+
+You parse/ split the string of the opponent_modelling argument in the run.sh (https://github.com/rahatsantosh/epymarl/blob/main/src/run.py#L278) and later check whether self.args.opponent_modelling contains particular values. I think having this parsing in the general run.sh is not as clean since no other code uses this, and it doesn't seem very robust (requires a particular string argument that needs to be in a particular format and needs to contain certain keywords). Since you expect particular values to be within that argument (everything but "action" and "observation" is ignored), I think it might be neater to instead of parsing a string give this as two separate booleans, e.g. args.opponent_model_decode_actions and args.opponent_model_decode_observations and ensure within the observation model that at least one of them is true. Then you don't need to do any particular parsing etc. [X]
+ 
+Atm you update the opponent model using the batch size of EPyMARL (which is for on-policy algorithms the number of episodes run in parallel) and the epochs of PPO (https://github.com/rahatsantosh/epymarl/blob/main/src/modules/opponent_model/opponent_model.py#L165) ff). Re the batch-size, does this currently result in a single batch within each epoch or multiple? I think it should be a single. Also, you might want to add a separate hyperparameter to determine the number of epochs you update the opponent model for (so you can tune this separately from the PPO epochs if desired. [X]
+
+The reshaping and fetching of the observations of other agents in the opponent dataset is critical code -- if we don't get this right then agent i will not have an embedding used to reconstruct the obs/ acts of other agents but something else. Definitely suggest to double check everything here, it looks fine at first glance but it's very easy to mess up the reshaping and dimensions somewhere: https://github.com/rahatsantosh/epymarl/blob/main/src/modules/opponent_model/opponent_model.py#L34 [X]
+
+You currently only log the opponent model loss overall, and the action accuracy - https://github.com/rahatsantosh/epymarl/blob/main/src/modules/opponent_model/opponent_model.py#L183. I'd suggest to log both losses separately (observation and action) as well as the overall loss so you can see if one of those losses dominates/ doesn't go down properly. [X]
+
+Something else easy to mess up/ miss -- make sure that the crossentropy loss gets the corect targets. Some versions expect onehot targets, others integer targets. [X]
