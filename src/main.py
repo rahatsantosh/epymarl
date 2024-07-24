@@ -94,8 +94,8 @@ if __name__ == "__main__":
     config_dict = recursive_dict_update(config_dict, alg_config)
 
     # NOTE: Default Values for Opponent Modelling Integration
-    config_dict["opponent_modelling"] = None
-    config_dict["latent_dims"] = 0
+    # config_dict["opponent_modelling"] = None
+    # config_dict["latent_dims"] = 0
 
     try:
         map_name = config_dict["env_args"]["map_name"]
