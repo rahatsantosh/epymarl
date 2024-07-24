@@ -91,15 +91,26 @@ class MADDPGMAC:
         return self.agent.parameters()
 
     def load_state(self, other_mac):
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            self.opponent_model.load_state_dict(other_mac.opponent_model.state_dict())
         self.agent.load_state_dict(other_mac.agent.state_dict())
 
     def cuda(self):
         self.agent.cuda()
 
     def save_models(self, path):
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            th.save(self.opponent_model, f"{path}/opponent.th")
         th.save(self.agent.state_dict(), "{}/agent.th".format(path))
 
     def load_models(self, path):
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            self.opponent_model.load_state_dict(
+                th.load(f"{path}/opponent.th", map_location=lambda storage, loc: storage)
+            )  
         self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
 
     def _build_agents(self, input_shape):
