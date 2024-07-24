@@ -77,7 +77,7 @@ class PPOLearner:
         old_log_pi_taken = th.log(old_pi_taken + 1e-10)
 
         #NOTE: Agent Modelling Integration
-        if self.args.opponent_modelling is not None: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
 
         for k in range(self.args.epochs):
             mac_out = []
