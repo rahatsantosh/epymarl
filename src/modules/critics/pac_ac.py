@@ -33,17 +33,17 @@ class PACCritic(nn.Module):
 
         # Set up network layers
         # Set up network layers
-        self.fc1 = nn.Linear(input_shape, args.hidden_dim)
+        self.fc1 = nn.Linear(input_shape+args.latent_dims, args.hidden_dim)
         self.fc2 = nn.Linear(args.hidden_dim, args.hidden_dim)
         self.fc3 = nn.Linear(args.hidden_dim, self.n_actions)
 
         self.device = "cuda" if args.use_cuda else "cpu"
 
-    def forward(self, batch, t=None, compute_all=False):
+    def forward(self, batch, t=None, compute_all=False, opponent_model=None):
         if compute_all:
-            inputs, bs, max_t, other_actions = self._build_inputs_all(batch, t=t)
+            inputs, bs, max_t, other_actions = self._build_inputs_all(batch, t=t, opponent_model=opponent_model)
         else:
-            inputs, bs, max_t, other_actions = self._build_inputs_cur(batch, t=t)
+            inputs, bs, max_t, other_actions = self._build_inputs_cur(batch, t=t, opponent_model=opponent_model)
 
         x = F.relu(self.fc1(inputs))
         x = F.relu(self.fc2(x))
@@ -81,7 +81,7 @@ class PACCritic(nn.Module):
         samples = rearrange(samples, "i j k l m -> k l i j m")
         return samples
 
-    def _build_inputs_all(self, batch, t=None):
+    def _build_inputs_all(self, batch, t=None, opponent_model=None):
         bs = batch.batch_size
         max_t = batch.max_seq_length if t is None else 1
 
@@ -138,11 +138,14 @@ class PACCritic(nn.Module):
         inputs = repeat(inputs, "n s a f -> n s a e f", e=n_other_actions)
         inputs = th.cat((inputs, other_actions), dim=-1)
 
-        # print(inputs.shape)
+        # NOTE: Opponent Modelling Integration
+        if opponent_model is not None:
+            opponent_encoded = opponent_model.batch_encoder(batch, ts).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=-1)
 
         return inputs, bs, max_t, other_actions
 
-    def _build_inputs_cur(self, batch, t=None):
+    def _build_inputs_cur(self, batch, t=None, opponent_model=None):
         bs = batch.batch_size
         max_t = batch.max_seq_length if t is None else 1
 
@@ -199,8 +202,11 @@ class PACCritic(nn.Module):
             )
         actions = th.cat(actions, dim=2)
         inputs.append(actions)
-        # inputs.append()
         inputs = th.cat(inputs, dim=-1)
+        # NOTE: Opponent Modelling Integration
+        if opponent_model is not None:
+            opponent_encoded = opponent_model.batch_encoder(batch, ts).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=-1)
         return inputs, bs, max_t, actions
 
     def _get_input_shape(self, scheme):

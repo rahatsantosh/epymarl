@@ -16,12 +16,16 @@ class MADDPGCritic(nn.Module):
         self.output_type = "q"
 
         # Set up network layers
-        self.fc1 = nn.Linear(self.input_shape, args.hidden_dim)
+        self.fc1 = nn.Linear(self.input_shape+args.latent_dims, args.hidden_dim)
         self.fc2 = nn.Linear(args.hidden_dim, args.hidden_dim)
         self.fc3 = nn.Linear(args.hidden_dim, 1)
 
-    def forward(self, inputs, actions):
+    def forward(self, inputs, actions, opponent_model=None):
         inputs = th.cat((inputs, actions), dim=-1)
+        # NOTE: Opponent Modelling Integration
+        if opponent_model is not None:
+            opponent_encoded = opponent_model.encoder(inputs).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=-1)
         x = F.relu(self.fc1(inputs))
         x = F.relu(self.fc2(x))
         q = self.fc3(x)

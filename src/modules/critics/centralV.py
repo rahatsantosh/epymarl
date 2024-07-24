@@ -18,7 +18,6 @@ class CentralVCritic(nn.Module):
 
         # Set up network layers
         self.fc1 = nn.Linear(input_shape+args.latent_dims, args.hidden_dim)
-        # self.fc1 = nn.Linear(input_shape, args.hidden_dim)
         self.fc2 = nn.Linear(args.hidden_dim, args.hidden_dim)
         self.fc3 = nn.Linear(args.hidden_dim, 1)
 
@@ -55,6 +54,7 @@ class CentralVCritic(nn.Module):
         inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).unsqueeze(0).expand(bs, max_t, -1, -1))
 
         inputs = th.cat(inputs, dim=-1)
+        # NOTE: Opponent Modelling Integration
         if opponent_model is not None:
             opponent_encoded = opponent_model.batch_encoder(batch, ts).detach()
             inputs = th.cat([inputs, opponent_encoded], dim=-1)
