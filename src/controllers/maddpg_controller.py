@@ -1,4 +1,5 @@
 from modules.agents import REGISTRY as agent_REGISTRY
+from modules.opponent_model.opponent_model import OpponentModel
 from components.action_selectors import REGISTRY as action_REGISTRY
 import torch as th
 from torch.autograd import Variable
@@ -58,6 +59,10 @@ class MADDPGMAC:
 
         self.hidden_states = None
 
+        # NOTE: Opponent Modelling Integration
+        if args.opponent_modelling is not None: self.opponent_model = OpponentModel(scheme, args)
+        else: self.opponent_model = None
+
     def select_actions(self, ep_batch, t_ep, t_env=0, test_mode=False):
         # Only select actions for the selected batch elements in bs
         agent_outputs = self.forward(ep_batch, t_ep)
@@ -115,6 +120,10 @@ class MADDPGMAC:
             inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            opponent_encoded = self.opponent_model.encoder(inputs).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=1)
         return inputs
 
     def _get_input_shape(self, scheme):
