@@ -45,6 +45,9 @@ class QLearner:
         mask[:, 1:] = mask[:, 1:] * (1 - terminated[:, :-1])
         avail_actions = batch["avail_actions"]
 
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
+
         # Calculate estimated Q-Values
         mac_out = []
         mac_hidden_states = []

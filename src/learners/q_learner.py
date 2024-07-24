@@ -56,6 +56,9 @@ class QLearner:
         mask = batch["filled"][:, :-1].float()
         mask[:, 1:] = mask[:, 1:] * (1 - terminated[:, :-1])
         avail_actions = batch["avail_actions"]
+        
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
 
         if self.args.standardise_rewards:
             self.rew_ms.update(rewards)
