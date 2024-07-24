@@ -158,7 +158,7 @@ class OpponentModel(nn.Module):
                 if self.args.opponent_model_decode_observations:
                     loss_obs = self.criterion(reconstructions_obs, opp_obs)
                 if self.args.opponent_model_decode_observations:
-                    target_actions = torch.zeros(opp_acts.shape[0], opp_acts.shape[1] * self.action_dim).to(self.args.device)
+                    target_actions = torch.zeros(opp_acts.shape[0], opp_acts.shape[1] * self.action_dim).to(batch.device)
                     for i in range(opp_acts.shape[1]):
                         target_actions.scatter_(1, opp_acts[:, i].unsqueeze(1) + i * self.action_dim, 1)
                     loss_act += self.criterion_action(reconstructions_act, target_actions)
