@@ -67,7 +67,7 @@ class MADDPGLearner:
         actions = actions.view(
             batch_size, -1, 1, self.n_agents * self.n_actions
         ).expand(-1, -1, self.n_agents, -1)
-        q_taken = self.critic(inputs[:, :-1], actions[:, :-1].detach())
+        q_taken = self.critic(inputs[:, :-1], actions[:, :-1].detach(), opponent_model=self.mac.opponent_model)
         q_taken = q_taken.view(batch_size, -1, 1)
 
         # Use the target actor and target critic network to compute the target q
@@ -81,7 +81,7 @@ class MADDPGLearner:
         target_actions = target_actions.view(
             batch_size, -1, 1, self.n_agents * self.n_actions
         ).expand(-1, -1, self.n_agents, -1)
-        target_vals = self.target_critic(inputs[:, 1:], target_actions.detach())
+        target_vals = self.target_critic(inputs[:, 1:], target_actions.detach(), opponent_model=self.target_mac.opponent_model)
         target_vals = target_vals.view(batch_size, -1, 1)
 
         if self.args.standardise_returns:
@@ -108,6 +108,9 @@ class MADDPGLearner:
             self.critic_params, self.args.grad_norm_clip
         )
         self.critic_optimiser.step()
+
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
 
         # Train the actor
         self.mac.init_hidden(batch_size)
@@ -138,7 +141,7 @@ class MADDPGLearner:
         pis = th.cat(pis, dim=1)
         pis[pis == -1e10] = 0
         pis = pis.reshape(-1, 1)
-        q = self.critic(inputs[:, :-1], new_actions)
+        q = self.critic(inputs[:, :-1], new_actions, opponent_model=self.old_mac.opponent_model)
         q = q.reshape(-1, 1)
         mask = mask.reshape(-1, 1)
 
