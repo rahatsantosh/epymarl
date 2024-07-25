@@ -76,6 +76,9 @@ class ActorCriticLearner:
             mac_out.append(agent_outs)
         mac_out = th.stack(mac_out, dim=1)  # Concat over time
 
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
+
         pi = mac_out
         advantages, critic_train_stats = self.train_critic_sequential(
             self.critic, self.target_critic, batch, rewards, critic_mask
@@ -147,7 +150,7 @@ class ActorCriticLearner:
     def train_critic_sequential(self, critic, target_critic, batch, rewards, mask):
         # Optimise critic
         with th.no_grad():
-            target_vals = target_critic(batch)
+            target_vals = target_critic(batch, opponent_model=self.mac.opponent_model)
             target_vals = target_vals.squeeze(3)
 
         if self.args.standardise_returns:
@@ -171,7 +174,7 @@ class ActorCriticLearner:
             "q_taken_mean": [],
         }
 
-        v = critic(batch)[:, :-1].squeeze(3)
+        v = critic(batch, opponent_model=self.mac.opponent_model)[:, :-1].squeeze(3)
         td_error = target_returns.detach() - v
         masked_td_error = td_error * mask
         loss = (masked_td_error**2).sum() / mask.sum()

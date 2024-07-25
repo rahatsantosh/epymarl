@@ -100,6 +100,9 @@ class COMALearner:
 
         self.critic_training_steps += 1
 
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
+
         if (
             self.args.target_update_interval_or_tau > 1
             and (self.critic_training_steps - self.last_target_update_step)
@@ -143,7 +146,7 @@ class COMALearner:
     ):
         # Optimise critic
         with th.no_grad():
-            target_q_vals = self.target_critic(batch)
+            target_q_vals = self.target_critic(batch, opponent_model=self.mac.opponent_model)
 
         targets_taken = th.gather(target_q_vals, dim=3, index=actions).squeeze(3)
 
@@ -165,7 +168,7 @@ class COMALearner:
         }
 
         actions = actions[:, :-1]
-        q_vals = self.critic(batch)[:, :-1]
+        q_vals = self.critic(batch, opponent_model=self.mac.opponent_model)[:, :-1]
         q_taken = th.gather(q_vals, dim=3, index=actions).squeeze(3)
 
         td_error = q_taken - targets.detach()

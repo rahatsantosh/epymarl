@@ -47,6 +47,9 @@ class PACActorCriticLearner:
         mask = batch["filled"][:, :-1].float()
         mask[:, 1:] = mask[:, 1:] * (1 - terminated[:, :-1])
 
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
+
         mask = mask.repeat(1, 1, self.n_agents)
 
         critic_mask = mask.clone()
@@ -136,7 +139,7 @@ class PACActorCriticLearner:
         actions = batch["actions"]
         # Optimise critic
         with th.no_grad():
-            target_vals = target_critic(batch, compute_all=True)[0][:, :-1]
+            target_vals = target_critic(batch, compute_all=True, opponent_model=self.old_mac.opponent_model)[0][:, :-1]
             target_vals = target_vals.max(dim=3)[0]
 
         target_vals = th.gather(target_vals, -1, actions[:, :-1]).squeeze(-1)
@@ -162,7 +165,7 @@ class PACActorCriticLearner:
         }
 
         actions = batch["actions"][:, :-1]
-        q = critic(batch)[0][:, :-1]
+        q = critic(batch, opponent_model=self.old_mac.opponent_model)[0][:, :-1]
         v = self.state_value(batch)[:, :-1].squeeze(-1)
 
         q_curr = th.gather(q, -1, actions).squeeze(-1)
@@ -175,7 +178,7 @@ class PACActorCriticLearner:
         loss += (masked_td_error_v**2).sum() / mask.sum()
 
         # compute the maximum Q-value and the joint action of the other agents that results in this Q-value
-        q_all = critic(batch, compute_all=True)[0][:, :-1]
+        q_all = critic(batch, compute_all=True, opponent_model=self.old_mac.opponent_model)[0][:, :-1]
         q_all = q_all.max(dim=3)[0]
 
         q_all = th.gather(q_all, -1, actions).squeeze(-1)
