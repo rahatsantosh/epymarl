@@ -6,7 +6,7 @@ class RNNFeatureAgent(nn.Module):
     def __init__(self, input_shape, args):
         nn.Module.__init__(self)
         self.args = args
-        self.fc1 = nn.Linear(input_shape, args.hidden_dim)
+        self.fc1 = nn.Linear(input_shape+args.latent_dims, args.hidden_dim)
         self.rnn = nn.GRUCell(args.hidden_dim, args.hidden_dim)
 
     def init_hidden(self):

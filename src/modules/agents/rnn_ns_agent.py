@@ -11,7 +11,7 @@ class RNNNSAgent(nn.Module):
         self.n_agents = args.n_agents
         self.input_shape = input_shape
         self.agents = th.nn.ModuleList(
-            [RNNAgent(input_shape, args) for _ in range(self.n_agents)]
+            [RNNAgent(input_shape+args.latent_dims, args) for _ in range(self.n_agents)]
         )
 
     def init_hidden(self):

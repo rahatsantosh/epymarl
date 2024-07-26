@@ -7,6 +7,7 @@ from torch.optim import Adam
 from components.episode_buffer import EpisodeBatch
 from components.standarize_stream import RunningMeanStd
 from modules.critics import REGISTRY as critic_resigtry
+from modules.opponent_model.opponent_model import OpponentModel
 
 
 class PPOLearner:
@@ -74,6 +75,9 @@ class PPOLearner:
 
         old_pi_taken = th.gather(old_pi, dim=3, index=actions).squeeze(3)
         old_log_pi_taken = th.log(old_pi_taken + 1e-10)
+
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
 
         for k in range(self.args.epochs):
             mac_out = []
@@ -162,7 +166,7 @@ class PPOLearner:
     def train_critic_sequential(self, critic, target_critic, batch, rewards, mask):
         # Optimise critic
         with th.no_grad():
-            target_vals = target_critic(batch)
+            target_vals = target_critic(batch, opponent_model=self.old_mac.opponent_model)
             target_vals = target_vals.squeeze(3)
 
         if self.args.standardise_returns:
@@ -185,7 +189,7 @@ class PPOLearner:
             "q_taken_mean": [],
         }
 
-        v = critic(batch)[:, :-1].squeeze(3)
+        v = critic(batch, opponent_model=self.mac.opponent_model)[:, :-1].squeeze(3)
         td_error = target_returns.detach() - v
         masked_td_error = td_error * mask
         loss = (masked_td_error**2).sum() / mask.sum()

@@ -1,5 +1,6 @@
 from modules.agents import REGISTRY as agent_REGISTRY
 from components.action_selectors import REGISTRY as action_REGISTRY
+from modules.opponent_model.opponent_model import OpponentModel
 import torch as th
 
 
@@ -11,6 +12,10 @@ class BasicMAC:
         input_shape = self._get_input_shape(scheme)
         self._build_agents(input_shape)
         self.agent_output_type = args.agent_output_type
+
+        # NOTE: Opponent Modelling Integration
+        if args.opponent_modelling is not None: self.opponent_model = OpponentModel(scheme, args)
+        else: self.opponent_model = None
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
 
@@ -46,16 +51,29 @@ class BasicMAC:
         return self.agent.parameters()
 
     def load_state(self, other_mac):
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            self.opponent_model.load_state_dict(other_mac.opponent_model.state_dict())
         self.agent.load_state_dict(other_mac.agent.state_dict())
 
     def cuda(self):
         self.agent.cuda()
 
     def save_models(self, path):
-        th.save(self.agent.state_dict(), "{}/agent.th".format(path))
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            th.save(self.opponent_model, f"{path}/opponent.th")
+        th.save(self.agent.state_dict(), f"{path}/agent.th")
 
     def load_models(self, path):
-        self.agent.load_state_dict(th.load("{}/agent.th".format(path), map_location=lambda storage, loc: storage))
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            self.opponent_model.load_state_dict(
+                th.load(f"{path}/opponent.th", map_location=lambda storage, loc: storage)
+            )    
+        self.agent.load_state_dict(
+            th.load(f"{path}/agent.th", map_location=lambda storage, loc: storage)
+        )
 
     def _build_agents(self, input_shape):
         self.agent = agent_REGISTRY[self.args.agent](input_shape, self.args)
@@ -64,8 +82,7 @@ class BasicMAC:
         # Assumes homogenous agents with flat observations.
         # Other MACs might want to e.g. delegate building inputs to each agent
         bs = batch.batch_size
-        inputs = []
-        inputs.append(batch["obs"][:, t])  # b1av
+        inputs = [batch["obs"][:, t]]
         if self.args.obs_last_action:
             if t == 0:
                 inputs.append(th.zeros_like(batch["actions_onehot"][:, t]))
@@ -75,6 +92,10 @@ class BasicMAC:
             inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
 
         inputs = th.cat([x.reshape(bs*self.n_agents, -1) for x in inputs], dim=1)
+        # NOTE: Opponent Modelling Integration
+        if self.opponent_model is not None:
+            opponent_encoded = self.opponent_model.encoder(inputs).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=1)
         return inputs
 
     def _get_input_shape(self, scheme):

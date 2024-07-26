@@ -9,7 +9,7 @@ class RNNAgent(nn.Module):
         super(RNNAgent, self).__init__()
         self.args = args
 
-        self.fc1 = nn.Linear(input_shape, args.hidden_dim)
+        self.fc1 = nn.Linear(input_shape+args.latent_dims, args.hidden_dim)
         if self.args.use_rnn:
             self.rnn = nn.GRUCell(args.hidden_dim, args.hidden_dim)
         else:
@@ -23,10 +23,7 @@ class RNNAgent(nn.Module):
     def forward(self, inputs, hidden_state):
         x = F.relu(self.fc1(inputs))
         h_in = hidden_state.reshape(-1, self.args.hidden_dim)
-        if self.args.use_rnn:
-            h = self.rnn(x, h_in)
-        else:
-            h = F.relu(self.rnn(x))
+        h = self.rnn(x, h_in) if self.args.use_rnn else F.relu(self.rnn(x))
         q = self.fc2(h)
         return q, h
 
