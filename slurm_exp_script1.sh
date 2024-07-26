@@ -5,7 +5,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --time=160:00:00
-#SBATCH --mem-per-cpu=10000M
+#SBATCH --mem-per-cpu=1000M
 #
 #SBATCH --array=0-50%20
 #SBATCH --requeue
