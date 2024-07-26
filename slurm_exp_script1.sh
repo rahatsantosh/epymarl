@@ -14,4 +14,4 @@
 source ~/anaconda3/bin/activate
 conda activate am
 
-python search.py run --config epymarl_search_config.yaml --seeds=3 single $SLURM_ARRAY_TASK_ID
+python src/search.py run --config epymarl_search_config.yaml --seeds=5 single $SLURM_ARRAY_TASK_ID
