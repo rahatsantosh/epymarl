@@ -24,6 +24,7 @@ run_experiment() {
     local env_key=$3
     local time_limit=$4
     local seed=$5
+    taskset -c $cpu_range python src/main.py --config=$config --env-config=$env_config with env_args.time_limit=$time_limit env_args.key=$env_key opponent_modelling=False seed=$seed &
     taskset -c $cpu_range python src/main.py --config=$config --env-config=$env_config with env_args.time_limit=$time_limit env_args.key=$env_key opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True latent_dims=32 seed=$seed &
     echo "Running with $config and $env_key for seed=$seed on CPUs $cpu_range"
 }
@@ -32,7 +33,7 @@ run_experiment() {
 for env_key in "${!env_configs[@]}"
 do
     IFS=":" read -r env_config time_limit <<< "${env_configs[$env_key]}"
-    for seed in {0..3}
+    for seed in {0..2}
     do
         run_experiment "mappo" $env_config $env_key $time_limit $seed
     done
