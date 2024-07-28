@@ -59,6 +59,7 @@ hypergroup: null
 opponent_modelling: False # Whether opponent modelling is to be used
 opponent_model_decode_observations: False # Whether to use opponent observations as the reconstruction target
 opponent_model_decode_actions: False # Whether to use opponent actions as the reconstruction target
+opponent_model_decode_rewards: False # Whether to use opponent rewards as the reconstruction target, only in case of individual rewards
 latent_dims: 0 # Latent Dimensions for the autoencoder reconstruction for the opponents
 batch_size_opponent_modelling: 64 # Autoencoder Batch size
 lr_opponent_modelling: 0.0005 # Autoencoder Adam Optimizer LR
