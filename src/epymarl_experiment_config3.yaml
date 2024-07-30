@@ -1,0 +1,33 @@
+exclude: null
+grid-search:
+  
+  opponent_model_decode_observations:
+    - false
+  
+  opponent_model_decode_actions:
+    - true
+  
+  opponent_model_decode_rewards:
+    - false
+  
+  latent_dims:
+    - 1
+    - 5
+    - 10
+    - 32
+    - 64
+
+
+grid-search-groups:
+  env0:
+    - "--env-config": "gymma"
+    - env_args.time_limit: 25
+    - env_args.key: "pz-mpe-simple-spread-v3"
+    - common_reward: False
+    - t_max: 10050000
+    - opponent_modelling: True
+    - save_model: True
+    - test_interval: 250000
+    - log_interval: 100000
+    - save_model_interval: 5000000
+    - "--config": "mappo"
