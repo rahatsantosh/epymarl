@@ -12,11 +12,6 @@ grid-search:
   opponent_model_decode_rewards:
     - true
     - false
-  
-  # latent_dims:
-  #   - 5
-  #   - 10
-  #   - 32
 
 
 grid-search-groups:
