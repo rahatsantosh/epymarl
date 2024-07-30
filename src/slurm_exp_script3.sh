@@ -7,7 +7,7 @@
 #SBATCH --time=160:00:00
 #SBATCH --mem-per-cpu=2000M
 #
-#SBATCH --array=0-40%20
+#SBATCH --array=0-25%20
 #SBATCH --requeue
 #SBATCH --nice
 
