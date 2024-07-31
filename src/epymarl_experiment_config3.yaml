@@ -2,10 +2,10 @@ exclude: null
 grid-search:
   
   opponent_model_decode_observations:
-    - false
+    - true
   
   opponent_model_decode_actions:
-    - true
+    - false
   
   opponent_model_decode_rewards:
     - false
