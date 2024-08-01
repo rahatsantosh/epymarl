@@ -65,3 +65,4 @@ batch_size_opponent_modelling: 64 # Autoencoder Batch size
 lr_opponent_modelling: 0.0005 # Autoencoder Adam Optimizer LR
 opponent_action_threshold: 0.7 # Threshold for Opponent Action Reconstruction Predictions
 opponent_model_epochs: 10 # Epochs for Opponent Modelling Autoencoder Training
+opponent_ewc_importance: 1e5

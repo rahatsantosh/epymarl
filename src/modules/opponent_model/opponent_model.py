@@ -30,7 +30,6 @@ def calculate_multi_label_accuracy(predictions, targets, threshold=0.5):
 class OpponentDataset(Dataset):
     def __init__(self, args, batch, t):
         self.args = args
-        self.reward_flag = args.opponent_model_decode_rewards
         self.ego_obs = self._build_inputs(batch, t)
 
         opp_obs_shape = list(batch['obs'].shape)
@@ -45,7 +44,7 @@ class OpponentDataset(Dataset):
         for i in range(args.n_agents):
             self.actions[:,:,i] = torch.cat((batch['actions'][:,:,:i], batch['actions'][:,:,i+1:]), dim=2).view(self.actions[:,:,i].shape)
         
-        if self.reward_flag:
+        if self.args.opponent_model_decode_rewards:
             opp_rew_shape = list(batch['reward'].shape)
             opp_rew_shape.append(1)
             opp_rew_shape[-1] *= (args.n_agents - 1)
@@ -62,9 +61,10 @@ class OpponentDataset(Dataset):
         return self.ego_obs.shape[0]
 
     def __getitem__(self, idx):
-        if self.reward_flag:
+        if self.args.opponent_model_decode_rewards:
             return self.ego_obs[idx], self.observations[idx], self.actions[idx], self.rewards[idx]
-        return self.ego_obs[idx], self.observations[idx], self.actions[idx]
+        else:
+            return self.ego_obs[idx], self.observations[idx], self.actions[idx], torch.zeros_like(self.actions[idx])
     
     def _build_inputs(self, batch, t):
         # Assumes homogenous agents with flat observations.
@@ -88,13 +88,9 @@ class OpponentModel(nn.Module):
     def __init__(self, scheme, args):
         super(OpponentModel, self).__init__()
         self.args = args
-        self.reward_flag = args.opponent_model_decode_rewards
         self.action_dim = scheme["actions_onehot"]["vshape"][0]
         input_shape = self._get_input_shape(scheme, args)
-        if self.reward_flag:
-            reconstruction_dims_obs, reconstruction_dims_act, reconstruction_dims_rew = self._get_reconstruction_dims(scheme)
-        else: 
-            reconstruction_dims_obs, reconstruction_dims_act = self._get_reconstruction_dims(scheme)
+        reconstruction_dims_obs, reconstruction_dims_act, reconstruction_dims_rew = self._get_reconstruction_dims(scheme)
         
         self.encode = nn.Sequential(
             nn.Linear(input_shape, 64),
@@ -110,24 +106,36 @@ class OpponentModel(nn.Module):
             nn.ReLU()
         )
 
-        self.decode_obs_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_obs)))
-        self.decode_act_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_act)))
-        if self.reward_flag:
+        if self.args.opponent_model_decode_observations:
+            self.decode_obs_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_obs)))
+        if self.args.opponent_model_decode_actions:
+            self.decode_act_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_act)))
+        if self.args.opponent_model_decode_rewards:
             self.decode_rew_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_rew)))
 
         self.criterion = nn.HuberLoss()
         self.criterion_action = nn.BCEWithLogitsLoss()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
+        self.fisher = {}
+        self.prev_params = {}
+        self.importance = args.opponent_ewc_importance  # EWC importance scaling factor
         
     def forward(self, x):
         encoded = self.encode(x)
         decoded = self.decode(encoded)
-        obs_head = self.decode_obs_head(decoded)
-        act_head = self.decode_act_head(decoded)
-        if self.reward_flag:
+        if self.args.opponent_model_decode_observations:
+            obs_head = self.decode_obs_head(decoded)
+        else:
+            obs_head = torch.zeros_like(decoded)
+        if self.args.opponent_model_decode_actions:
+            act_head = self.decode_act_head(decoded)
+        else:
+            act_head = torch.zeros_like(decoded)
+        if self.args.opponent_model_decode_rewards:
             rew_head = self.decode_rew_head(decoded)
-            return obs_head, act_head, rew_head
-        return obs_head, act_head
+        else:
+            rew_head = torch.zeros_like(decoded) 
+        return obs_head, act_head, rew_head
     
     def encoder(self, x):
         return self.encode(x)
@@ -164,26 +172,17 @@ class OpponentModel(nn.Module):
     def _get_reconstruction_dims(self, scheme):
         reconstruction_dim_obs = scheme["obs"]["vshape"] * (self.args.n_agents-1) # Observations
         reconstruction_dim_act = scheme["actions_onehot"]["vshape"][0] * (self.args.n_agents-1) # Actions
-        if self.reward_flag:
-            reconstruction_dim_rew = 1 * (self.args.n_agents-1) # Rewards
-            return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
-        return reconstruction_dim_obs, reconstruction_dim_act
+        reconstruction_dim_rew = 1 * (self.args.n_agents-1) # Rewards
+        return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
     
     def learn(self, batch, logger, t_env, t, log_stats_t):
         dataset = OpponentDataset(self.args, batch, t)
         dataloader = DataLoader(dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
         # Training loop
         for _ in range(self.args.opponent_model_epochs):
-            for data in dataloader:
-                if self.reward_flag:
-                    ego_obs, opp_obs, opp_acts, opp_rew = data
-                else:
-                    ego_obs, opp_obs, opp_acts = data
+            for ego_obs, opp_obs, opp_acts, opp_rew in dataloader:
                 self.optimizer.zero_grad()
-                if self.reward_flag:
-                    reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
-                else:
-                    reconstructions_obs, reconstructions_act = self.forward(ego_obs)
+                reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
                 loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
                 loss = 0.0
                 if self.args.opponent_model_decode_observations:
