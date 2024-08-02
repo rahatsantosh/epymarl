@@ -20,6 +20,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 5000000
     - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
@@ -34,6 +35,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 5000000
     - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
@@ -48,6 +50,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 5000000
     - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
@@ -62,6 +65,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 5000000
     - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
@@ -75,6 +79,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 2500000
     - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
