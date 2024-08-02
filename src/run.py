@@ -282,5 +282,8 @@ def args_sanity_check(config, _log):
         assert config["opponent_model_decode_rewards"] or config["opponent_model_decode_actions"] or config["opponent_model_decode_observations"] is True, "No Reconstruction Target Set for Opponent Modelling"
     else:
         config["latent_dims"] = 0
+    
+    if not (config["opponent_model_decode_rewards"] or config["opponent_model_decode_actions"] or config["opponent_model_decode_observations"]) and not config["opponent_modelling"]:
+        config["opponent_modelling"] = False
 
     return config
