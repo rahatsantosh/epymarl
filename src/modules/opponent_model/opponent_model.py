@@ -1,28 +1,20 @@
 from torch import nn
 import torch
+import os
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
-def calculate_multi_label_accuracy(predictions, targets, threshold=0.5):
-    # Ensure both predictions and targets are tensors
+def calculate_multi_label_accuracy(predictions, targets, action_dim):
     if not isinstance(predictions, torch.Tensor):
         predictions = torch.tensor(predictions)
     if not isinstance(targets, torch.Tensor):
         targets = torch.tensor(targets)
+    predictions = torch.softmax(predictions.view(-1, predictions.shape[-1]//action_dim, action_dim), dim=2)
+    predicted_labels = torch.argmax(predictions, dim=2)
     
-    # Check if both predictions and targets have the same shape
-    assert predictions.shape == targets.shape, "Shapes of predictions and targets must match"
-
-    # Apply the threshold to get predicted labels
-    predicted_labels = (predictions >= threshold).float()
-    
-    # Calculate the number of correct predictions for each label
     correct_predictions = (predicted_labels == targets).float().sum(dim=1)
-    
-    # Calculate the accuracy per instance
     accuracy_per_instance = correct_predictions / targets.size(1)
     
-    # Calculate the overall accuracy
     accuracy = accuracy_per_instance.mean().item()
     
     return accuracy
@@ -81,6 +73,35 @@ class OpponentDataset(Dataset):
 
         inputs = torch.cat([x.reshape(bs*self.args.n_agents, -1) for x in inputs], dim=1)
         return inputs
+    
+    def append_data(self, batch, t):
+        new_ego_obs = self._build_inputs(batch, t)
+
+        new_opp_obs_shape = list(batch['obs'].shape)
+        new_opp_obs_shape[-1] *= (self.args.n_agents - 1)
+        new_observations = torch.empty(*new_opp_obs_shape, dtype=batch['obs'].dtype)
+        for i in range(self.args.n_agents):
+            new_observations[:,:,i] = torch.cat((batch['obs'][:,:,:i], batch['obs'][:,:,i+1:]), dim=2).view(new_observations[:,:,i].shape)
+
+        new_opp_act_shape = list(batch['actions'].shape)
+        new_opp_act_shape[-1] *= (self.args.n_agents - 1)
+        new_actions = torch.empty(*new_opp_act_shape, dtype=batch['actions'].dtype)
+        for i in range(self.args.n_agents):
+            new_actions[:,:,i] = torch.cat((batch['actions'][:,:,:i], batch['actions'][:,:,i+1:]), dim=2).view(new_actions[:,:,i].shape)
+        
+        if self.args.opponent_model_decode_rewards:
+            new_opp_rew_shape = list(batch['reward'].shape)
+            new_opp_rew_shape.append(1)
+            new_opp_rew_shape[-1] *= (self.args.n_agents - 1)
+            new_rewards = torch.empty(*new_opp_rew_shape, dtype=batch['reward'].dtype)
+            for i in range(self.args.n_agents):
+                new_rewards[:,:,i] = torch.cat((batch['reward'][:,:,:i], batch['reward'][:,:,i+1:]), dim=2).view(new_rewards[:,:,i].shape)
+            new_rewards = torch.flatten(new_rewards, end_dim=-2)
+            self.rewards = torch.cat((self.rewards, torch.flatten(new_rewards, end_dim=-2)), dim=0)
+        
+        self.ego_obs = torch.cat((self.ego_obs, torch.flatten(new_ego_obs, end_dim=-2)), dim=0)
+        self.observations = torch.cat((self.observations, torch.flatten(new_observations, end_dim=-2)), dim=0)
+        self.actions = torch.cat((self.actions, torch.flatten(new_actions, end_dim=-2)), dim=0)
 
 
 
@@ -113,12 +134,51 @@ class OpponentModel(nn.Module):
         if self.args.opponent_model_decode_rewards:
             self.decode_rew_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_rew)))
 
-        self.criterion = nn.HuberLoss()
-        self.criterion_action = nn.BCEWithLogitsLoss()
+        self.criterion = nn.MSELoss()
+        self.criterion_action = nn.CrossEntropyLoss() #nn.BCEWithLogitsLoss()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
         self.fisher = {}
         self.prev_params = {}
         self.importance = args.opponent_ewc_importance  # EWC importance scaling factor
+        self.dataset = None
+    
+    def compute_fisher_information(self, dataloader, device):
+        self.eval()
+        
+        for name, param in self.named_parameters():
+            self.fisher[name] = torch.zeros_like(param)
+            self.prev_params[name] = param.clone()
+        
+        for data in dataloader:
+            ego_obs, obs_, acts_, rew_ = data
+            self.optimizer.zero_grad()
+            obs, acts, rew = self.forward(ego_obs)
+            loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
+            loss = 0.0
+            if self.args.opponent_model_decode_observations:
+                loss_obs = self.criterion(obs, obs_)
+            if self.args.opponent_model_decode_rewards:
+                loss_rew = self.criterion(rew, rew_)
+            if self.args.opponent_model_decode_actions:
+                target_actions = torch.zeros(acts_.shape[0], acts_.shape[1] * self.action_dim, device=device)
+                for i in range(acts_.shape[1]):
+                    target_actions.scatter_(1, acts_[:, i].unsqueeze(1) + i * self.action_dim, 1)
+                loss_act = self.criterion_action(acts, target_actions)
+            loss = loss_obs + loss_act + loss_rew
+            loss.backward()
+            
+            for name, param in self.named_parameters():
+                self.fisher[name] += torch.square(param.grad.detach()) / len(dataloader)
+        self.optimizer.zero_grad()
+        self.train()
+    
+    def ewc_penalty(self):
+        loss = 0.0
+        for name, param in self.named_parameters():
+            fisher = self.fisher[name].detach()
+            prev_param = self.prev_params[name].detach()
+            loss += (fisher * torch.square(param.detach() - prev_param)).sum()
+        return self.importance * loss
         
     def forward(self, x):
         encoded = self.encode(x)
@@ -175,35 +235,59 @@ class OpponentModel(nn.Module):
         reconstruction_dim_rew = 1 * (self.args.n_agents-1) # Rewards
         return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
     
-    def learn(self, batch, logger, t_env, t, log_stats_t):
-        dataset = OpponentDataset(self.args, batch, t)
-        dataloader = DataLoader(dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
-        # Training loop
-        for _ in range(self.args.opponent_model_epochs):
-            for ego_obs, opp_obs, opp_acts, opp_rew in dataloader:
-                self.optimizer.zero_grad()
-                reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
-                loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
-                loss = 0.0
-                if self.args.opponent_model_decode_observations:
-                    loss_obs = self.criterion(reconstructions_obs, opp_obs)
-                if self.args.opponent_model_decode_rewards:
-                    loss_rew = self.criterion(reconstructions_rew, opp_rew)
-                if self.args.opponent_model_decode_actions:
-                    target_actions = torch.zeros(opp_acts.shape[0], opp_acts.shape[1] * self.action_dim, device=batch.device)
-                    for i in range(opp_acts.shape[1]):
-                        target_actions.scatter_(1, opp_acts[:, i].unsqueeze(1) + i * self.action_dim, 1)
-                    loss_act = self.criterion_action(reconstructions_act, target_actions)
-                    accuracy = calculate_multi_label_accuracy(reconstructions_act, target_actions, self.args.opponent_action_threshold)
-                loss = loss_obs + loss_act + loss_rew
-                loss.backward()
-                self.optimizer.step()
-
+    def learn(self, batch, logger, t_env, t, log_stats_t):    
+        self.train()
+        if self.dataset is None:
+            self.dataset = OpponentDataset(self.args, batch, t)
+        else:
+            self.dataset.append_data(batch, t)
+        
         if t_env - log_stats_t >= self.args.learner_log_interval:
+            dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
+
+            # Compute Fisher Information using the current dataloader before training
+            # self.compute_fisher_information(dataloader, batch.device)
+            loss_act_, loss_obs_, loss_rew_, accuracy_, ewc_loss_ = [], [], [], [], []
+
+            # Training loop
+            for _ in range(self.args.opponent_model_epochs):
+                for ego_obs, opp_obs, opp_acts, opp_rew in dataloader:
+                    self.optimizer.zero_grad()
+                    reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
+                    loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
+                    loss = 0.0
+                    if self.args.opponent_model_decode_observations:
+                        loss_obs = self.criterion(reconstructions_obs, opp_obs)
+                        loss_obs_.append(loss_obs.item())
+                    if self.args.opponent_model_decode_rewards:
+                        loss_rew = self.criterion(reconstructions_rew, opp_rew)
+                        loss_rew_.append(loss_rew.item())
+                    if self.args.opponent_model_decode_actions:
+                        accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
+                        reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
+                        reconstructions_act = torch.swapaxes(reconstructions_act, 1, 2)
+                        loss_act = self.criterion_action(reconstructions_act, opp_acts)
+                        loss_act_.append(loss_act.item())
+                        accuracy_.append(accuracy)
+                    loss = loss_obs + loss_act + loss_rew
+
+                    # Add EWC penalty to the loss
+                    # ewc_loss = self.ewc_penalty()
+                    # loss += ewc_loss
+
+                    loss.backward()
+                    self.optimizer.step()
+
             if self.args.opponent_model_decode_observations:
-                logger.log_stat("opponent_model_loss_decode_observations", loss_obs.item(), t_env)
+                logger.log_stat("opponent_model_loss_decode_observations", np.mean(loss_obs_), t_env)
+                logger.log_stat("opponent_model_loss_decode_observations_std", np.std(loss_obs_), t_env)
             if self.args.opponent_model_decode_rewards:
-                logger.log_stat("opponent_model_loss_decode_rewards", loss_rew.item(), t_env)
+                logger.log_stat("opponent_model_loss_decode_rewards", np.mean(loss_rew_), t_env)
+                logger.log_stat("opponent_model_loss_decode_rewards_std", np.std(loss_rew_), t_env)
             if self.args.opponent_model_decode_actions:
-                logger.log_stat("opponent_model_loss_decode_actions", loss_act.item(), t_env)
-                logger.log_stat("opponent_model_decode_actions_accuracy", accuracy, t_env)
+                logger.log_stat("opponent_model_loss_decode_actions", np.mean(loss_act_), t_env)
+                logger.log_stat("opponent_model_loss_decode_actions_std", np.std(loss_act_), t_env)
+                logger.log_stat("opponent_model_decode_actions_accuracy", np.mean(accuracy_), t_env)
+                logger.log_stat("opponent_model_decode_actions_accuracy_std", np.std(accuracy_), t_env)
+            # logger.log_stat("opponent_model_decode_actions_accuracy", ewc_loss, t_env)
+            self.dataset = None
