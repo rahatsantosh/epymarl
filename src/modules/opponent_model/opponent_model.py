@@ -137,48 +137,48 @@ class OpponentModel(nn.Module):
         self.criterion = nn.MSELoss()
         self.criterion_action = nn.CrossEntropyLoss() #nn.BCEWithLogitsLoss()
         self.optimizer = torch.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
-        self.fisher = {}
-        self.prev_params = {}
-        self.importance = args.opponent_ewc_importance  # EWC importance scaling factor
+        # self.fisher = {}
+        # self.prev_params = {}
+        # self.importance = args.opponent_ewc_importance  # EWC importance scaling factor
         self.dataset = None
     
-    def compute_fisher_information(self, dataloader, device):
-        self.eval()
+    # def compute_fisher_information(self, dataloader, device):
+    #     self.eval()
         
-        for name, param in self.named_parameters():
-            self.fisher[name] = torch.zeros_like(param)
-            self.prev_params[name] = param.clone()
+    #     for name, param in self.named_parameters():
+    #         self.fisher[name] = torch.zeros_like(param)
+    #         self.prev_params[name] = param.clone()
         
-        for data in dataloader:
-            ego_obs, obs_, acts_, rew_ = data
-            self.optimizer.zero_grad()
-            obs, acts, rew = self.forward(ego_obs)
-            loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
-            loss = 0.0
-            if self.args.opponent_model_decode_observations:
-                loss_obs = self.criterion(obs, obs_)
-            if self.args.opponent_model_decode_rewards:
-                loss_rew = self.criterion(rew, rew_)
-            if self.args.opponent_model_decode_actions:
-                target_actions = torch.zeros(acts_.shape[0], acts_.shape[1] * self.action_dim, device=device)
-                for i in range(acts_.shape[1]):
-                    target_actions.scatter_(1, acts_[:, i].unsqueeze(1) + i * self.action_dim, 1)
-                loss_act = self.criterion_action(acts, target_actions)
-            loss = loss_obs + loss_act + loss_rew
-            loss.backward()
+    #     for data in dataloader:
+    #         ego_obs, obs_, acts_, rew_ = data
+    #         self.optimizer.zero_grad()
+    #         obs, acts, rew = self.forward(ego_obs)
+    #         loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
+    #         loss = 0.0
+    #         if self.args.opponent_model_decode_observations:
+    #             loss_obs = self.criterion(obs, obs_)
+    #         if self.args.opponent_model_decode_rewards:
+    #             loss_rew = self.criterion(rew, rew_)
+    #         if self.args.opponent_model_decode_actions:
+    #             target_actions = torch.zeros(acts_.shape[0], acts_.shape[1] * self.action_dim, device=device)
+    #             for i in range(acts_.shape[1]):
+    #                 target_actions.scatter_(1, acts_[:, i].unsqueeze(1) + i * self.action_dim, 1)
+    #             loss_act = self.criterion_action(acts, target_actions)
+    #         loss = loss_obs + loss_act + loss_rew
+    #         loss.backward()
             
-            for name, param in self.named_parameters():
-                self.fisher[name] += torch.square(param.grad.detach()) / len(dataloader)
-        self.optimizer.zero_grad()
-        self.train()
+    #         for name, param in self.named_parameters():
+    #             self.fisher[name] += torch.square(param.grad.detach()) / len(dataloader)
+    #     self.optimizer.zero_grad()
+    #     self.train()
     
-    def ewc_penalty(self):
-        loss = 0.0
-        for name, param in self.named_parameters():
-            fisher = self.fisher[name].detach()
-            prev_param = self.prev_params[name].detach()
-            loss += (fisher * torch.square(param.detach() - prev_param)).sum()
-        return self.importance * loss
+    # def ewc_penalty(self):
+    #     loss = 0.0
+    #     for name, param in self.named_parameters():
+    #         fisher = self.fisher[name].detach()
+    #         prev_param = self.prev_params[name].detach()
+    #         loss += (fisher * torch.square(param.detach() - prev_param)).sum()
+    #     return self.importance * loss
         
     def forward(self, x):
         encoded = self.encode(x)
