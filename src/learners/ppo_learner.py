@@ -260,7 +260,7 @@ class PPOLearner:
         self.mac.save_models(path)
         th.save(self.critic.state_dict(), "{}/critic.th".format(path))
         th.save(self.agent_optimiser.state_dict(), "{}/agent_opt.th".format(path))
-        if self.args.opponent_model:
+        if self.args.opponent_modelling:
             th.save(self.mac.opponent_model.optimizer.state_dict(), "{}/agent_opponent_opt.th".format(path))
         th.save(self.critic_optimiser.state_dict(), "{}/critic_opt.th".format(path))
 
@@ -279,7 +279,7 @@ class PPOLearner:
                 map_location=lambda storage, loc: storage,
             )
         )
-        if self.args.opponent_model:
+        if self.args.opponent_modelling:
             self.mac.opponent_model.optimizer.load_state_dict(
                 th.load(
                     "{}/agent_opponent_opt.th".format(path),
