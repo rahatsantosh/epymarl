@@ -118,8 +118,10 @@ class OpponentModel(nn.Module):
             nn.ReLU(),
             nn.Linear(64, 64),
             nn.ReLU(),
-            nn.Linear(64, args.latent_dims),
+            nn.Linear(64, 64),
         )
+        self.encode_mean = nn.Linear(64, args.latent_dims)
+        self.encode_std = nn.Linear(64, args.latent_dims)
         self.decode = nn.Sequential(
             nn.Linear(args.latent_dims, 64),
             nn.ReLU(),
@@ -138,10 +140,18 @@ class OpponentModel(nn.Module):
         self.criterion_action = nn.CrossEntropyLoss() #nn.BCEWithLogitsLoss()
         self.optimizer = th.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
         self.dataset = None
+    
+    def reparameterize(self, mu, logvar):
+        std = th.exp(0.5 * logvar)
+        eps = th.randn_like(std)
+        return mu + eps * std
         
     def forward(self, x):
         encoded = self.encode(x)
-        decoded = self.decode(encoded)
+        mu = self.encode_mean(encoded)
+        logvar = self.encode_std(encoded)
+        z = self.reparameterize(mu, logvar)
+        decoded = self.decode(z)
         if self.args.opponent_model_decode_observations:
             obs_head = self.decode_obs_head(decoded)
         else:
@@ -157,12 +167,20 @@ class OpponentModel(nn.Module):
         return obs_head, act_head, rew_head
     
     def encoder(self, x):
-        return self.encode(x)
+        encoded = self.encode(x)
+        mu = self.encode_mean(encoded)
+        logvar = self.encode_std(encoded)
+        z = self.reparameterize(mu, logvar)
+        return z
     
     def batch_encoder(self, batch, t):
         x = self._build_inputs(batch, t)
         x_shape = list(x.shape)
-        return self.encode(x.view(-1, x_shape[-1])).view(x_shape[0], x_shape[1], x_shape[2], -1)
+        encoded = self.encode(x.view(-1, x_shape[-1])).view(x_shape[0], x_shape[1], x_shape[2], -1)
+        mu = self.encode_mean(encoded)
+        logvar = self.encode_std(encoded)
+        z = self.reparameterize(mu, logvar)
+        return z
     
     def _build_inputs(self, batch, t):
         bs = batch.batch_size
@@ -254,7 +272,7 @@ class OpponentModelNS(nn.Module):
         self.models = th.nn.ModuleList(
             [OpponentModel(scheme, args) for _ in range(args.n_agents)]
         )
-        
+
         self.dataset = None
         
     def forward(self, x):
