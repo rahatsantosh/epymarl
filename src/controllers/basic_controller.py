@@ -14,7 +14,7 @@ class BasicMAC:
         self.agent_output_type = args.agent_output_type
 
         # NOTE: Opponent Modelling Integration
-        if args.opponent_modelling is not None: self.opponent_model = OpponentModel(scheme, args)
+        if args.opponent_modelling: self.opponent_model = OpponentModel(scheme, args)
         else: self.opponent_model = None
 
         self.action_selector = action_REGISTRY[args.action_selector](args)

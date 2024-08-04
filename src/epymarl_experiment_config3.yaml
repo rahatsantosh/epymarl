@@ -11,6 +11,7 @@ grid-search:
     - false
   
   latent_dims:
+    - 0
     - 1
     - 5
     - 10

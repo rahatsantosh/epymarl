@@ -278,7 +278,9 @@ def args_sanity_check(config, _log):
             config["test_nepisode"] // config["batch_size_run"]
         ) * config["batch_size_run"]
     
-    config["opponent_modelling"] = config["opponent_model_decode_rewards"] or config["opponent_model_decode_actions"] or config["opponent_model_decode_observations"]
+    config["opponent_modelling"] = config["opponent_modelling"] and (config["opponent_model_decode_rewards"] or config["opponent_model_decode_actions"] or config["opponent_model_decode_observations"])
+    if config['latent_dims'] == 0:
+        config["opponent_modelling"] = False
     if not config["opponent_modelling"]:
         config["latent_dims"] = 0
     
