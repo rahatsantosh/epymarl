@@ -171,6 +171,7 @@ class OpponentModel(nn.Module):
         return obs_head, act_head, rew_head
     
     def encoder(self, x):
+        self.eval()
         encoded = self.encode(x)
         mu = self.encode_mean(encoded)
         logvar = self.encode_std(encoded)
@@ -178,6 +179,7 @@ class OpponentModel(nn.Module):
         return z
     
     def batch_encoder(self, batch, t):
+        self.eval()
         x = self._build_inputs(batch, t)
         x_shape = list(x.shape)
         encoded = self.encode(x.view(-1, x_shape[-1])).view(x_shape[0], x_shape[1], x_shape[2], -1)
