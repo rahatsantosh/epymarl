@@ -67,7 +67,7 @@ class QLearner:
             ), "Expected singular agent dimension for common rewards"
             # reshape rewards to be of shape (batch_size, episode_length, n_agents)
             rewards = rewards.expand(-1, -1, self.n_agents)
-
+        
         # Calculate estimated Q-Values
         mac_out = []
         self.mac.init_hidden(batch.batch_size)
@@ -93,6 +93,9 @@ class QLearner:
         # Mask out unavailable actions
         target_mac_out[avail_actions[:, 1:] == 0] = -9999999
 
+        #NOTE: Agent Modelling Integration
+        if self.args.opponent_modelling: 
+            self.mac.opponent_model.learn(batch, self.logger, t_env, t, self.log_stats_t)
         # Max over target Q-Values
         if self.args.double_q:
             # Get actions that maximise live Q (for double q-learning)
