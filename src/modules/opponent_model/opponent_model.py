@@ -116,8 +116,10 @@ class OpponentModel(nn.Module):
         self.encode = nn.Sequential(
             nn.Linear(input_shape, 64),
             nn.ReLU(),
+            nn.Dropout(p=0.3),
             nn.Linear(64, 64),
             nn.ReLU(),
+            nn.Dropout(p=0.3),
             nn.Linear(64, 64),
         )
         self.encode_mean = nn.Linear(64, args.latent_dims)
@@ -125,8 +127,10 @@ class OpponentModel(nn.Module):
         self.decode = nn.Sequential(
             nn.Linear(args.latent_dims, 64),
             nn.ReLU(),
+            nn.Dropout(p=0.3),
             nn.Linear(64, 64),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(p=0.3),
         )
 
         if self.args.opponent_model_decode_observations:
