@@ -5,7 +5,7 @@ grid-search:
     - true
   
   opponent_model_decode_actions:
-    - false
+    - true
   
   opponent_model_decode_rewards:
     - false
@@ -22,13 +22,14 @@ grid-search:
 grid-search-groups:
   env0:
     - "--env-config": "gymma"
-    - env_args.time_limit: 25
-    - env_args.key: "pz-mpe-simple-spread-v3"
+    - env_args.time_limit: 50
+    - env_args.key: "lbforaging:Foraging-10x10-4p-4f-v3"
     - common_reward: False
-    - t_max: 10050000
     - opponent_modelling: True
     - save_model: True
+    - t_max: 10050000
     - test_interval: 250000
     - log_interval: 100000
     - save_model_interval: 5000000
+    - latent_dims: 32
     - "--config": "mappo"
