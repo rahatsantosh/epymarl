@@ -10,32 +10,16 @@ grid-search:
 
 
 grid-search-groups:
-  env0:
-    - "--env-config": "gymma"
-    - env_args.time_limit: 50
-    - env_args.key: "lbforaging:Foraging-5x5-2p-2f-v3"
+  env4:
+    - "--env-config": "smaclite"
+    - env_args.map_name: "2s3z"
     - common_reward: True
-    - t_max: 10050000
-    - test_interval: 250000
+    - t_max: 5050000
+    - test_interval: 125000
     - log_interval: 100000
-    - save_model_interval: 5000000
-    - opponent_model_decode_observations: True
+    - save_model_interval: 2500000
+    - opponent_model_decode_observations: False
     - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
-  
-  env1:
-    - "--env-config": "gymma"
-    - env_args.time_limit: 50
-    - env_args.key: "lbforaging:Foraging-5x5-2p-2f-v3"
-    - common_reward: True
-    - t_max: 10050000
-    - test_interval: 250000
-    - log_interval: 100000
-    - save_model_interval: 5000000
-    - opponent_model_decode_observations: True
-    - opponent_model_decode_rewards: False
-    - opponent_model_decode_actions: True
-    - latent_dims: 32
-    - "--config": "iql"
