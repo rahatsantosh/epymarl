@@ -1,6 +1,6 @@
 from torch import nn
 import torch as th
-import os
+import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
@@ -22,7 +22,7 @@ def calculate_multi_label_accuracy(predictions, targets, action_dim):
 class OpponentDataset(Dataset):
     def __init__(self, args, batch, t):
         self.args = args
-        self.ego_obs = self._build_inputs(batch, t)
+        self.ego_obs, self.ego_reward = self._build_inputs(batch, t)
 
         opp_obs_shape = list(batch['obs'].shape)
         opp_obs_shape[-1] *= (args.n_agents - 1)
@@ -54,15 +54,16 @@ class OpponentDataset(Dataset):
 
     def __getitem__(self, idx):
         if self.args.opponent_model_decode_rewards:
-            return self.ego_obs[idx], self.observations[idx], self.actions[idx], self.rewards[idx]
+            return self.ego_obs[idx], self.observations[idx], self.actions[idx], self.rewards[idx], self.ego_reward[idx]
         else:
-            return self.ego_obs[idx], self.observations[idx], self.actions[idx], th.zeros_like(self.actions[idx])
+            return self.ego_obs[idx], self.observations[idx], self.actions[idx], th.zeros_like(self.actions[idx]), self.ego_reward[idx]
     
     def _build_inputs(self, batch, t):
         # Assumes homogenous agents with flat observations.
         # Other MACs might want to e.g. delegate building inputs to each agent
         bs = batch.batch_size
         inputs = [batch["obs"][:, t]]
+        rewards = [batch["reward"][:, t]]
         if self.args.obs_last_action:
             if t == 0:
                 inputs.append(th.zeros_like(batch["actions_onehot"][:, t]))
@@ -72,10 +73,14 @@ class OpponentDataset(Dataset):
             inputs.append(th.eye(self.args.n_agents, device=batch.device).unsqueeze(0).expand(bs, -1, -1))
 
         inputs = th.cat([x.reshape(bs*self.args.n_agents, -1) for x in inputs], dim=1)
-        return inputs
+        if self.args.opponent_model_decode_rewards:
+            rewards = th.cat([x.reshape(bs*self.args.n_agents, -1) for x in rewards], dim=1)
+        else:
+            rewards = (th.cat([x.reshape(bs, -1) for x in rewards], dim=1)).repeat_interleave(self.args.n_agents, dim=0)
+        return inputs, rewards
     
     def append_data(self, batch, t):
-        new_ego_obs = self._build_inputs(batch, t)
+        new_ego_obs, new_ego_rewards = self._build_inputs(batch, t)
 
         new_opp_obs_shape = list(batch['obs'].shape)
         new_opp_obs_shape[-1] *= (self.args.n_agents - 1)
@@ -100,6 +105,7 @@ class OpponentDataset(Dataset):
             self.rewards = th.cat((self.rewards, th.flatten(new_rewards, end_dim=-2)), dim=0)
         
         self.ego_obs = th.cat((self.ego_obs, th.flatten(new_ego_obs, end_dim=-2)), dim=0)
+        self.ego_reward = th.cat((self.ego_reward, th.flatten(new_ego_rewards, end_dim=-2)), dim=0)
         self.observations = th.cat((self.observations, th.flatten(new_observations, end_dim=-2)), dim=0)
         self.actions = th.cat((self.actions, th.flatten(new_actions, end_dim=-2)), dim=0)
 
@@ -168,7 +174,7 @@ class OpponentModel(nn.Module):
             rew_head = self.decode_rew_head(decoded)
         else:
             rew_head = th.zeros_like(decoded) 
-        return obs_head, act_head, rew_head
+        return obs_head, act_head, rew_head, z
     
     def encoder(self, x):
         self.eval()
@@ -218,7 +224,7 @@ class OpponentModel(nn.Module):
         reconstruction_dim_rew = 1 * (self.args.n_agents-1) # Rewards
         return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
     
-    def learn(self, batch, logger, t_env, t, log_stats_t):    
+    def learn(self, batch, logger, t_env, t, log_stats_t):
         self.train()
         if self.dataset is None:
             self.dataset = OpponentDataset(self.args, batch, t)
@@ -232,25 +238,29 @@ class OpponentModel(nn.Module):
 
             # Training loop
             for _ in range(self.args.opponent_model_epochs):
-                for ego_obs, opp_obs, opp_acts, opp_rew in dataloader:
+                for ego_obs, opp_obs, opp_acts, opp_rew, ego_rew in dataloader:
                     self.optimizer.zero_grad()
-                    reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
+                    reconstructions_obs, reconstructions_act, reconstructions_rew, encoded = self.forward(ego_obs)
                     loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
                     loss = 0.0
                     if self.args.opponent_model_decode_observations:
-                        loss_obs = self.criterion(reconstructions_obs, opp_obs)
+                        loss_obs = self.criterion(reconstructions_obs, opp_obs).float()
                         loss_obs_.append(loss_obs.item())
                     if self.args.opponent_model_decode_rewards:
-                        loss_rew = self.criterion(reconstructions_rew, opp_rew)
+                        loss_rew = self.criterion(reconstructions_rew, opp_rew).float()
                         loss_rew_.append(loss_rew.item())
                     if self.args.opponent_model_decode_actions:
                         accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
-                        reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
-                        reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
-                        loss_act = self.criterion_action(reconstructions_act, opp_acts)
+                        # reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
+                        # reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
+                        # loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
+                        target_acts = F.one_hot(opp_acts, num_classes=self.action_dim).view(-1, opp_acts.shape[-1]*self.action_dim).float()
+                        loss_act = self.criterion(reconstructions_act, target_acts).float()
                         loss_act_.append(loss_act.item())
                         accuracy_.append(accuracy)
-                    loss = loss_obs + loss_act + loss_rew
+                    # if th.any(ego_rew != 0.0):
+                    #     print(ego_rew)
+                    loss = loss_obs + loss_act + loss_rew + (-th.mean(ego_rew * encoded).float())
 
                     loss.backward()
                     self.optimizer.step()
