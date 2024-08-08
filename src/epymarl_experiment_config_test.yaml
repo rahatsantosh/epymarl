@@ -16,8 +16,9 @@ grid-search-groups:
     - env_args.key: "pz-mpe-simple-spread-v3"
     - common_reward: False
     - t_max: 10050000
-    - opponent_modelling: True
-    - save_model: True
+    - opponent_model_decode_observations: True
+    - opponent_model_decode_rewards: True
+    - opponent_model_decode_actions: True
     - test_interval: 250000
     - log_interval: 100000
     - latent_dims: 32
