@@ -12,14 +12,14 @@ grid-search:
 grid-search-groups:
   env4:
     - "--env-config": "smaclite"
-    - env_args.map_name: "2s3z"
+    - env_args.map_name: "3s5z"
     - common_reward: True
     - t_max: 5050000
     - test_interval: 125000
     - log_interval: 100000
     - save_model_interval: 2500000
-    - opponent_model_decode_observations: False
-    - opponent_model_decode_rewards: False
+    - opponent_model_decode_observations: True
+    - opponent_model_decode_rewards: True
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"

@@ -260,9 +260,9 @@ class OpponentModel(nn.Module):
                         accuracy_.append(accuracy)
                     # if th.any(ego_rew != 0.0):
                     #     print(ego_rew)
-                    encoded_norm = th.norm(encoded, dim=-1)
-                    reg_loss = th.mean(th.relu(1.0 - encoded_norm))
-                    loss = loss_obs + loss_act + loss_rew + 0.1*(reg_loss-th.mean(ego_rew * encoded).float())
+                    # encoded_norm = th.norm(encoded, dim=-1)
+                    # reg_loss = th.mean(th.relu(1.0 - encoded_norm))
+                    loss = loss_obs + loss_act + loss_rew #+ 0.1*(reg_loss-th.mean(ego_rew * encoded).float())
 
                     loss.backward()
                     self.optimizer.step()
