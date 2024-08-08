@@ -155,6 +155,7 @@ class PPOLearner:
                 t_env,
             )
             self.logger.log_stat("pg_loss", pg_loss.item(), t_env)
+            self.logger.log_stat("entropy", th.mean(entropy), t_env)
             self.logger.log_stat("agent_grad_norm", grad_norm.item(), t_env)
             self.logger.log_stat(
                 "pi_max",

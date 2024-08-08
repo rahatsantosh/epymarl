@@ -1,6 +1,7 @@
 from torch import nn
 import torch as th
 import torch.nn.functional as F
+import torch.distributions as distributions
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
@@ -18,6 +19,13 @@ def calculate_multi_label_accuracy(predictions, targets, action_dim):
     accuracy = accuracy_per_instance.mean().item()
     
     return accuracy
+
+def calculate_entropy(action_probs):
+    action_probs = th.softmax(action_probs.detach(), dim=2)
+    dist = distributions.Categorical(probs=action_probs)
+    entropy = dist.entropy()
+    
+    return entropy
 
 class OpponentDataset(Dataset):
     def __init__(self, args, batch, t):
@@ -226,14 +234,15 @@ class OpponentModel(nn.Module):
     
     def learn(self, batch, logger, t_env, t, log_stats_t):
         self.train()
-        if self.dataset is None:
-            self.dataset = OpponentDataset(self.args, batch, t)
-        else:
-            self.dataset.append_data(batch, t)
+        # if self.dataset is None:
+        self.dataset = OpponentDataset(self.args, batch, t)
+        # else:
+        #     self.dataset.append_data(batch, t)
         
         dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
 
         loss_act_, loss_obs_, loss_rew_, accuracy_ = [], [], [], []
+        entropy = []
 
         # Training loop
         for _ in range(self.args.opponent_model_epochs):
@@ -251,6 +260,7 @@ class OpponentModel(nn.Module):
                 if self.args.opponent_model_decode_actions:
                     accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
                     reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
+                    entropy.extend(calculate_entropy(reconstructions_act).view(-1))
                     reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
                     loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
                     # target_acts = F.one_hot(opp_acts, num_classes=self.action_dim).view(-1, opp_acts.shape[-1]*self.action_dim).float()
@@ -276,9 +286,11 @@ class OpponentModel(nn.Module):
             if self.args.opponent_model_decode_actions:
                 logger.log_stat("opponent_model_loss_decode_actions", np.mean(loss_act_), t_env)
                 logger.log_stat("opponent_model_loss_decode_actions_std", np.std(loss_act_), t_env)
+                logger.log_stat("opponent_model_entropy_decode_actions", np.mean(entropy), t_env)
+                logger.log_stat("opponent_model_entropy_decode_actions_std", np.std(entropy), t_env)
                 logger.log_stat("opponent_model_decode_actions_accuracy", np.mean(accuracy_), t_env)
                 logger.log_stat("opponent_model_decode_actions_accuracy_std", np.std(accuracy_), t_env)
-            self.dataset = None
+            # self.dataset = None
 
 
 class OpponentModelNS(nn.Module):
