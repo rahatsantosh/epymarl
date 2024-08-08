@@ -19,7 +19,7 @@ grid-search-groups:
     - log_interval: 100000
     - save_model_interval: 2500000
     - opponent_model_decode_observations: True
-    - opponent_model_decode_rewards: True
+    - opponent_model_decode_rewards: False
     - opponent_model_decode_actions: True
     - latent_dims: 32
     - "--config": "mappo"
