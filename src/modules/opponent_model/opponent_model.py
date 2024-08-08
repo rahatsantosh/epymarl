@@ -122,21 +122,21 @@ class OpponentModel(nn.Module):
         self.encode = nn.Sequential(
             nn.Linear(input_shape, 64),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
+            # nn.Dropout(p=0.3),
             nn.Linear(64, 64),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
-            nn.Linear(64, 64),
+            # nn.Dropout(p=0.3),
+            nn.Linear(64, args.latent_dims),
         )
-        self.encode_mean = nn.Linear(64, args.latent_dims)
-        self.encode_std = nn.Linear(64, args.latent_dims)
+        # self.encode_mean = nn.Linear(64, args.latent_dims)
+        # self.encode_std = nn.Linear(64, args.latent_dims)
         self.decode = nn.Sequential(
             nn.Linear(args.latent_dims, 64),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
+            # nn.Dropout(p=0.3),
             nn.Linear(64, 64),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
+            # nn.Dropout(p=0.3),
         )
 
         if self.args.opponent_model_decode_observations:
@@ -151,17 +151,17 @@ class OpponentModel(nn.Module):
         self.optimizer = th.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
         self.dataset = None
     
-    def reparameterize(self, mu, logvar):
-        std = th.exp(0.5 * logvar)
-        eps = th.randn_like(std)
-        return mu + eps * std
+    # def reparameterize(self, mu, logvar):
+    #     std = th.exp(0.5 * logvar)
+    #     eps = th.randn_like(std)
+    #     return mu + eps * std
         
     def forward(self, x):
         encoded = self.encode(x)
-        mu = self.encode_mean(encoded)
-        logvar = self.encode_std(encoded)
-        z = self.reparameterize(mu, logvar)
-        decoded = self.decode(z)
+        # mu = self.encode_mean(encoded)
+        # logvar = self.encode_std(encoded)
+        # z = self.reparameterize(mu, logvar)
+        decoded = self.decode(encoded)
         if self.args.opponent_model_decode_observations:
             obs_head = self.decode_obs_head(decoded)
         else:
@@ -174,25 +174,25 @@ class OpponentModel(nn.Module):
             rew_head = self.decode_rew_head(decoded)
         else:
             rew_head = th.zeros_like(decoded) 
-        return obs_head, act_head, rew_head, z
+        return obs_head, act_head, rew_head
     
     def encoder(self, x):
         self.eval()
         encoded = self.encode(x)
-        mu = self.encode_mean(encoded)
-        logvar = self.encode_std(encoded)
-        z = self.reparameterize(mu, logvar)
-        return z
+        # mu = self.encode_mean(encoded)
+        # logvar = self.encode_std(encoded)
+        # z = self.reparameterize(mu, logvar)
+        return encoded
     
     def batch_encoder(self, batch, t):
         self.eval()
         x = self._build_inputs(batch, t)
         x_shape = list(x.shape)
         encoded = self.encode(x.view(-1, x_shape[-1])).view(x_shape[0], x_shape[1], x_shape[2], -1)
-        mu = self.encode_mean(encoded)
-        logvar = self.encode_std(encoded)
-        z = self.reparameterize(mu, logvar)
-        return z
+        # mu = self.encode_mean(encoded)
+        # logvar = self.encode_std(encoded)
+        # z = self.reparameterize(mu, logvar)
+        return encoded
     
     def _build_inputs(self, batch, t):
         bs = batch.batch_size
@@ -231,42 +231,42 @@ class OpponentModel(nn.Module):
         else:
             self.dataset.append_data(batch, t)
         
+        dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
+
+        loss_act_, loss_obs_, loss_rew_, accuracy_ = [], [], [], []
+
+        # Training loop
+        for _ in range(self.args.opponent_model_epochs):
+            for ego_obs, opp_obs, opp_acts, opp_rew, ego_rew in dataloader:
+                self.optimizer.zero_grad()
+                reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
+                loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
+                loss = 0.0
+                if self.args.opponent_model_decode_observations:
+                    loss_obs = self.criterion(reconstructions_obs, opp_obs).float()
+                    loss_obs_.append(loss_obs.item())
+                if self.args.opponent_model_decode_rewards:
+                    loss_rew = self.criterion(reconstructions_rew, opp_rew).float()
+                    loss_rew_.append(loss_rew.item())
+                if self.args.opponent_model_decode_actions:
+                    accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
+                    reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
+                    reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
+                    loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
+                    # target_acts = F.one_hot(opp_acts, num_classes=self.action_dim).view(-1, opp_acts.shape[-1]*self.action_dim).float()
+                    # loss_act = self.criterion(reconstructions_act, target_acts).float()
+                    loss_act_.append(loss_act.item())
+                    accuracy_.append(accuracy)
+                # if th.any(ego_rew != 0.0):
+                #     print(ego_rew)
+                # encoded_norm = th.norm(encoded, dim=-1)
+                # reg_loss = th.mean(th.relu(1.0 - encoded_norm))
+                loss = loss_obs + loss_act + loss_rew #+ 0.1*(reg_loss-th.mean(ego_rew * encoded).float())
+
+                loss.backward()
+                self.optimizer.step()
+
         if t_env - log_stats_t >= self.args.learner_log_interval:
-            dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
-
-            loss_act_, loss_obs_, loss_rew_, accuracy_ = [], [], [], []
-
-            # Training loop
-            for _ in range(self.args.opponent_model_epochs):
-                for ego_obs, opp_obs, opp_acts, opp_rew, ego_rew in dataloader:
-                    self.optimizer.zero_grad()
-                    reconstructions_obs, reconstructions_act, reconstructions_rew, encoded = self.forward(ego_obs)
-                    loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
-                    loss = 0.0
-                    if self.args.opponent_model_decode_observations:
-                        loss_obs = self.criterion(reconstructions_obs, opp_obs).float()
-                        loss_obs_.append(loss_obs.item())
-                    if self.args.opponent_model_decode_rewards:
-                        loss_rew = self.criterion(reconstructions_rew, opp_rew).float()
-                        loss_rew_.append(loss_rew.item())
-                    if self.args.opponent_model_decode_actions:
-                        accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
-                        # reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
-                        # reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
-                        # loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
-                        target_acts = F.one_hot(opp_acts, num_classes=self.action_dim).view(-1, opp_acts.shape[-1]*self.action_dim).float()
-                        loss_act = self.criterion(reconstructions_act, target_acts).float()
-                        loss_act_.append(loss_act.item())
-                        accuracy_.append(accuracy)
-                    # if th.any(ego_rew != 0.0):
-                    #     print(ego_rew)
-                    # encoded_norm = th.norm(encoded, dim=-1)
-                    # reg_loss = th.mean(th.relu(1.0 - encoded_norm))
-                    loss = loss_obs + loss_act + loss_rew #+ 0.1*(reg_loss-th.mean(ego_rew * encoded).float())
-
-                    loss.backward()
-                    self.optimizer.step()
-
             if self.args.opponent_model_decode_observations:
                 logger.log_stat("opponent_model_loss_decode_observations", np.mean(loss_obs_), t_env)
                 logger.log_stat("opponent_model_loss_decode_observations_std", np.std(loss_obs_), t_env)
