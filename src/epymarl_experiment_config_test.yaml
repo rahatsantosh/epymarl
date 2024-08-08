@@ -10,17 +10,17 @@ grid-search:
 
 
 grid-search-groups:
-  env0:
+  env1:
     - "--env-config": "gymma"
-    - env_args.time_limit: 25
-    - env_args.key: "pz-mpe-simple-spread-v3"
+    - env_args.time_limit: 50
+    - env_args.key: "lbforaging:Foraging-4s-20x20-2p-4f-v3"
     - common_reward: False
-    - t_max: 10050000
-    - opponent_model_decode_observations: True
-    - opponent_model_decode_rewards: True
-    - opponent_model_decode_actions: False
+    - t_max: 15050000
     - test_interval: 250000
     - log_interval: 100000
-    - latent_dims: 32
     - save_model_interval: 5000000
+    - opponent_model_decode_observations: False
+    - opponent_model_decode_rewards: False
+    - opponent_model_decode_actions: True
+    - latent_dims: 32
     - "--config": "mappo"
