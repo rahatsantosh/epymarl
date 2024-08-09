@@ -21,8 +21,8 @@ def calculate_multi_label_accuracy(predictions, targets, action_dim):
     return accuracy
 
 def calculate_entropy(action_probs):
-    action_probs = th.softmax(action_probs.detach(), dim=2)
-    dist = distributions.Categorical(probs=action_probs)
+    # action_probs = th.softmax(action_probs.detach(), dim=2)
+    dist = distributions.Categorical(probs=action_probs.detach())
     entropy = dist.entropy()
     
     return entropy
@@ -44,6 +44,12 @@ class OpponentDataset(Dataset):
         for i in range(args.n_agents):
             self.actions[:,:,i] = th.cat((batch['actions'][:,:,:i], batch['actions'][:,:,i+1:]), dim=2).view(self.actions[:,:,i].shape)
         
+        opp_act_shape = list(batch['actions_onehot'].shape)
+        opp_act_shape[-1] *= (args.n_agents - 1)
+        self.action_logits = th.empty(*opp_act_shape, dtype=batch['actions_onehot'].dtype)
+        for i in range(args.n_agents):
+            self.action_logits[:,:,i] = th.cat((batch['actions_onehot'][:,:,:i], batch['actions_onehot'][:,:,i+1:]), dim=2).view(self.action_logits[:,:,i].shape)
+        
         if self.args.opponent_model_decode_rewards:
             opp_rew_shape = list(batch['reward'].shape)
             opp_rew_shape.append(1)
@@ -56,15 +62,16 @@ class OpponentDataset(Dataset):
         self.ego_obs = th.flatten(self.ego_obs, end_dim=-2)
         self.observations = th.flatten(self.observations, end_dim=-2)
         self.actions = th.flatten(self.actions, end_dim=-2)
+        self.action_logits = th.flatten(self.action_logits, end_dim=-2)
 
     def __len__(self):
         return self.ego_obs.shape[0]
 
     def __getitem__(self, idx):
         if self.args.opponent_model_decode_rewards:
-            return self.ego_obs[idx], self.observations[idx], self.actions[idx], self.rewards[idx], self.ego_reward[idx]
+            return self.ego_obs[idx], self.observations[idx], self.actions[idx], self.rewards[idx], self.ego_reward[idx], self.action_logits[idx]
         else:
-            return self.ego_obs[idx], self.observations[idx], self.actions[idx], th.zeros_like(self.actions[idx]), self.ego_reward[idx]
+            return self.ego_obs[idx], self.observations[idx], self.actions[idx], th.zeros_like(self.actions[idx]), self.ego_reward[idx], self.action_logits[idx]
     
     def _build_inputs(self, batch, t):
         # Assumes homogenous agents with flat observations.
@@ -246,7 +253,7 @@ class OpponentModel(nn.Module):
 
         # Training loop
         for _ in range(self.args.opponent_model_epochs):
-            for ego_obs, opp_obs, opp_acts, opp_rew, ego_rew in dataloader:
+            for ego_obs, opp_obs, opp_acts, opp_rew, ego_rew, action_logits in dataloader:
                 self.optimizer.zero_grad()
                 reconstructions_obs, reconstructions_act, reconstructions_rew = self.forward(ego_obs)
                 loss_obs, loss_act, loss_rew = 0.0, 0.0, 0.0
@@ -259,12 +266,16 @@ class OpponentModel(nn.Module):
                     loss_rew_.append(loss_rew.item())
                 if self.args.opponent_model_decode_actions:
                     accuracy = calculate_multi_label_accuracy(reconstructions_act, opp_acts, self.action_dim)
+                    reconstruction_shape = reconstructions_act.shape
                     reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
+                    reconstructions_act = th.softmax(reconstructions_act, dim=2)
                     entropy.extend(calculate_entropy(reconstructions_act).view(-1))
-                    reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
-                    loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
+                    reconstructions_act = reconstructions_act.view(reconstruction_shape)
+                    # reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
+                    # loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
                     # target_acts = F.one_hot(opp_acts, num_classes=self.action_dim).view(-1, opp_acts.shape[-1]*self.action_dim).float()
-                    # loss_act = self.criterion(reconstructions_act, target_acts).float()
+                    # loss_act = self.criterion(reconstructions_act, action_logits).float()
+                    loss_act = F.kl_div(reconstructions_act.log(), action_logits, reduction='batchmean')
                     loss_act_.append(loss_act.item())
                     accuracy_.append(accuracy)
                 # if th.any(ego_rew != 0.0):
