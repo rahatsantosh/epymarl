@@ -248,7 +248,7 @@ class OpponentModel(nn.Module):
         return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
     
     def learn(self, batch, logger, t_env, t, log_stats_t):
-        if t_env<0.4*self.args.t_max or not is_in_repeated_range(t_env, self.args.t_max*0.01, self.args.t_max*0.001):
+        if t_env<0.2*self.args.t_max or not is_in_repeated_range(t_env, self.args.t_max*0.01, self.args.t_max*0.001):
             if t_env - log_stats_t >= self.args.learner_log_interval:
                 if self.args.opponent_model_decode_observations:
                     logger.log_stat("opponent_model_loss_decode_observations", 3, t_env)
