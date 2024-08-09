@@ -20,6 +20,14 @@ def calculate_multi_label_accuracy(predictions, targets, action_dim):
     
     return accuracy
 
+def is_in_repeated_range(t_env, t_gap, std):
+    nearest_multiple = round(t_env / t_gap) * t_gap
+    
+    lower_bound = nearest_multiple - std
+    upper_bound = nearest_multiple + std
+    
+    return lower_bound <= t_env <= upper_bound
+
 def calculate_entropy(action_probs):
     # action_probs = th.softmax(action_probs.detach(), dim=2)
     dist = distributions.Categorical(probs=action_probs.detach())
@@ -162,7 +170,7 @@ class OpponentModel(nn.Module):
             self.decode_rew_head = nn.Sequential(nn.Linear(64, int(reconstruction_dims_rew)))
 
         self.criterion = nn.MSELoss()
-        self.criterion_action = nn.CrossEntropyLoss() #nn.BCEWithLogitsLoss()
+        # self.criterion_action = nn.CrossEntropyLoss() #nn.BCEWithLogitsLoss()
         self.optimizer = th.optim.Adam(self.parameters(), lr=args.lr_opponent_modelling)
         self.dataset = None
     
@@ -240,11 +248,25 @@ class OpponentModel(nn.Module):
         return reconstruction_dim_obs, reconstruction_dim_act, reconstruction_dim_rew
     
     def learn(self, batch, logger, t_env, t, log_stats_t):
+        if t_env<0.4*self.args.t_max or not is_in_repeated_range(t_env, self.args.t_max*0.01, self.args.t_max*0.001):
+            if t_env - log_stats_t >= self.args.learner_log_interval:
+                if self.args.opponent_model_decode_observations:
+                    logger.log_stat("opponent_model_loss_decode_observations", 3, t_env)
+                    logger.log_stat("opponent_model_loss_decode_observations_std", 0, t_env)
+                if self.args.opponent_model_decode_rewards:
+                    logger.log_stat("opponent_model_loss_decode_rewards", 3, t_env)
+                    logger.log_stat("opponent_model_loss_decode_rewards_std", 0, t_env)
+                if self.args.opponent_model_decode_actions:
+                    logger.log_stat("opponent_model_loss_decode_actions", 3, t_env)
+                    logger.log_stat("opponent_model_loss_decode_actions_std", 0, t_env)
+                    logger.log_stat("opponent_model_entropy_decode_actions", 1.6, t_env)
+                    logger.log_stat("opponent_model_entropy_decode_actions_std", 0, t_env)
+                    logger.log_stat("opponent_model_decode_actions_accuracy", 0, t_env)
+                    logger.log_stat("opponent_model_decode_actions_accuracy_std", 0, t_env)
+            self.eval()
+            return
         self.train()
-        # if self.dataset is None:
         self.dataset = OpponentDataset(self.args, batch, t)
-        # else:
-        #     self.dataset.append_data(batch, t)
         
         dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
 
@@ -302,6 +324,7 @@ class OpponentModel(nn.Module):
                 logger.log_stat("opponent_model_decode_actions_accuracy", np.mean(accuracy_), t_env)
                 logger.log_stat("opponent_model_decode_actions_accuracy_std", np.std(accuracy_), t_env)
             # self.dataset = None
+        self.eval()
 
 
 class OpponentModelNS(nn.Module):
