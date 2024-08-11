@@ -20,14 +20,6 @@ def calculate_multi_label_accuracy(predictions, targets, action_dim):
     
     return accuracy
 
-def is_in_repeated_range(t_env, t_gap, std):
-    nearest_multiple = round(t_env / t_gap) * t_gap
-    
-    lower_bound = nearest_multiple - std
-    upper_bound = nearest_multiple + std
-    
-    return lower_bound <= t_env <= upper_bound
-
 def calculate_entropy(action_probs):
     # action_probs = th.softmax(action_probs.detach(), dim=2)
     dist = distributions.Categorical(probs=action_probs.detach())
@@ -254,7 +246,7 @@ class OpponentModel(nn.Module):
         dataloader = DataLoader(self.dataset, batch_size=self.args.batch_size_opponent_modelling, shuffle=True)
 
         loss_act_, loss_obs_, loss_rew_, accuracy_ = [], [], [], []
-        entropy = []
+        entropy = [0]
 
         # Training loop
         for _ in range(self.args.opponent_model_epochs):
@@ -274,7 +266,10 @@ class OpponentModel(nn.Module):
                     reconstruction_shape = reconstructions_act.shape
                     reconstructions_act = reconstructions_act.view(-1, reconstructions_act.shape[-1]//self.action_dim, self.action_dim)
                     reconstructions_act = th.softmax(reconstructions_act, dim=2)
-                    entropy.extend(calculate_entropy(reconstructions_act).view(-1))
+                    try:
+                        entropy.extend(calculate_entropy(reconstructions_act).view(-1))
+                    except:
+                        pass
                     reconstructions_act = reconstructions_act.view(reconstruction_shape)
                     # reconstructions_act = th.swapaxes(reconstructions_act, 1, 2)
                     # loss_act = self.criterion_action(reconstructions_act, opp_acts).float()
