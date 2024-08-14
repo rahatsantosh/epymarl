@@ -14,7 +14,7 @@ grid-search:
     - true
   
   opponent_model_decode_rewards:
-    - true
+    - false
   
   latent_dims:
     - 0
@@ -27,12 +27,11 @@ grid-search:
 
 grid-search-groups:
   env0:
-    - "--env-config": "gymma"
-    - env_args.time_limit: 25
-    - env_args.key: "pz-mpe-simple-spread-v3"
-    - common_reward: False
-    - t_max: 20050000
-    - test_interval: 250000
+    - "--env-config": "smaclite"
+    - env_args.map_name: "MMM2"
+    - common_reward: True
+    - t_max: 5050000
+    - test_interval: 125000
     - log_interval: 100000
-    - save_model_interval: 5000000
+    - save_model_interval: 2500000
     - "--config": "mappo"
