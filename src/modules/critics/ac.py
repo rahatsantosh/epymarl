@@ -15,18 +15,18 @@ class ACCritic(nn.Module):
         self.output_type = "v"
 
         # Set up network layers
-        self.fc1 = nn.Linear(input_shape, args.hidden_dim)
+        self.fc1 = nn.Linear(input_shape+args.latent_dims, args.hidden_dim)
         self.fc2 = nn.Linear(args.hidden_dim, args.hidden_dim)
         self.fc3 = nn.Linear(args.hidden_dim, 1)
 
-    def forward(self, batch, t=None):
-        inputs, bs, max_t = self._build_inputs(batch, t=t)
+    def forward(self, batch, t=None, opponent_model=None):
+        inputs, bs, max_t = self._build_inputs(batch, t=t, opponent_model=opponent_model)
         x = F.relu(self.fc1(inputs))
         x = F.relu(self.fc2(x))
         q = self.fc3(x)
         return q
 
-    def _build_inputs(self, batch, t=None):
+    def _build_inputs(self, batch, t=None, opponent_model=None):
         bs = batch.batch_size
         max_t = batch.max_seq_length if t is None else 1
         ts = slice(None) if t is None else slice(t, t+1)
@@ -37,6 +37,10 @@ class ACCritic(nn.Module):
         inputs.append(th.eye(self.n_agents, device=batch.device).unsqueeze(0).unsqueeze(0).expand(bs, max_t, -1, -1))
 
         inputs = th.cat(inputs, dim=-1)
+        # NOTE: Opponent Modelling Integration
+        if opponent_model is not None:
+            opponent_encoded = opponent_model.batch_encoder(batch, ts).detach()
+            inputs = th.cat([inputs, opponent_encoded], dim=-1)
         return inputs, bs, max_t
 
     def _get_input_shape(self, scheme):
