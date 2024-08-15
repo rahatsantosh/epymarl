@@ -24,23 +24,23 @@ grid-search-groups:
   env1:
     - "--env-config": "gymma"
     - env_args.time_limit: 50
-    - env_args.key: "lbforaging:Foraging-2s-10x10-3p-3f-v3"
+    - env_args.key: "lbforaging:Foraging-15x15-3p-4f-v3"
     - common_reward: False
     - t_max: 20050000
     - test_interval: 250000
     - log_interval: 100000
     - save_model_interval: 5000000
-    - latent_dims: 32
+    - latent_dims: 10
     - "--config": "mappo"
   
   env2:
     - "--env-config": "gymma"
     - env_args.time_limit: 25
-    - env_args.key: "pz-mpe-simple-spread-v3"
+    - env_args.key: "pz-mpe-simple-speaker-listener"
     - common_reward: False
     - t_max: 20050000
     - test_interval: 250000
     - log_interval: 100000
     - save_model_interval: 5000000
-    - latent_dims: 32
+    - latent_dims: 10
     - "--config": "mappo"
