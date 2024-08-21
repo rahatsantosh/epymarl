@@ -1,0 +1,856 @@
+Starting resource usage benchmarking with perf...
+Running No Agent Modelling...
+Run 1 for No Agent Modelling:
+# started on Tue Aug 20 07:03:33 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=False t_max=100000':
+
+        185,864.59 msec task-clock:u                     #    2.832 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           769,037      page-faults:u                    #    4.138 K/sec                  
+   671,380,614,503      cycles:u                         #    3.612 GHz                      (38.61%)
+   587,927,261,596      instructions:u                   #    0.88  insn per cycle           (46.24%)
+    98,111,606,319      branches:u                       #  527.866 M/sec                    (46.21%)
+     2,605,319,698      branch-misses:u                  #    2.66% of all branches          (46.39%)
+   194,833,438,956      L1-dcache-loads:u                #    1.048 G/sec                    (46.27%)
+    18,524,693,013      L1-dcache-load-misses:u          #    9.51% of all L1-dcache accesses  (46.35%)
+     4,298,199,449      LLC-loads:u                      #   23.125 M/sec                    (31.02%)
+       443,991,551      LLC-load-misses:u                #   10.33% of all LL-cache accesses  (30.76%)
+   <not supported>      L1-icache-loads:u                                           
+    25,610,024,512      L1-icache-load-misses:u                                              (30.89%)
+   193,640,437,613      dTLB-loads:u                     #    1.042 G/sec                    (30.78%)
+       298,870,237      dTLB-load-misses:u               #    0.15% of all dTLB cache accesses  (30.66%)
+     2,587,970,155      iTLB-loads:u                     #   13.924 M/sec                    (30.93%)
+       277,315,952      iTLB-load-misses:u               #   10.72% of all iTLB cache accesses  (30.85%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      65.633981078 seconds time elapsed
+
+     178.815237000 seconds user
+       8.250799000 seconds sys
+
+
+
+Run 2 for No Agent Modelling:
+# started on Tue Aug 20 07:04:38 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=False t_max=100000':
+
+        187,955.59 msec task-clock:u                     #    2.789 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           767,997      page-faults:u                    #    4.086 K/sec                  
+   662,457,110,206      cycles:u                         #    3.525 GHz                      (38.48%)
+   587,629,337,180      instructions:u                   #    0.89  insn per cycle           (46.20%)
+    98,070,350,731      branches:u                       #  521.774 M/sec                    (46.14%)
+     2,644,269,257      branch-misses:u                  #    2.70% of all branches          (46.37%)
+   194,320,379,509      L1-dcache-loads:u                #    1.034 G/sec                    (46.22%)
+    18,558,681,826      L1-dcache-load-misses:u          #    9.55% of all L1-dcache accesses  (46.31%)
+     4,310,736,567      LLC-loads:u                      #   22.935 M/sec                    (31.04%)
+       438,335,643      LLC-load-misses:u                #   10.17% of all LL-cache accesses  (30.87%)
+   <not supported>      L1-icache-loads:u                                           
+    25,317,624,214      L1-icache-load-misses:u                                              (30.89%)
+   194,196,606,660      dTLB-loads:u                     #    1.033 G/sec                    (30.87%)
+       313,430,299      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.74%)
+     2,550,463,848      iTLB-loads:u                     #   13.570 M/sec                    (30.88%)
+       223,718,155      iTLB-load-misses:u               #    8.77% of all iTLB cache accesses  (30.81%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      67.381182837 seconds time elapsed
+
+     180.611434000 seconds user
+       8.531871000 seconds sys
+
+
+
+Run 3 for No Agent Modelling:
+# started on Tue Aug 20 07:05:46 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=False t_max=100000':
+
+        193,805.12 msec task-clock:u                     #    2.760 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           698,973      page-faults:u                    #    3.607 K/sec                  
+   657,279,158,651      cycles:u                         #    3.391 GHz                      (38.47%)
+   589,065,526,454      instructions:u                   #    0.90  insn per cycle           (46.27%)
+    98,196,888,366      branches:u                       #  506.679 M/sec                    (46.20%)
+     2,612,158,865      branch-misses:u                  #    2.66% of all branches          (46.33%)
+   194,940,086,724      L1-dcache-loads:u                #    1.006 G/sec                    (46.22%)
+    18,637,318,986      L1-dcache-load-misses:u          #    9.56% of all L1-dcache accesses  (46.25%)
+     4,373,415,157      LLC-loads:u                      #   22.566 M/sec                    (30.85%)
+       440,360,047      LLC-load-misses:u                #   10.07% of all LL-cache accesses  (30.88%)
+   <not supported>      L1-icache-loads:u                                           
+    25,479,941,307      L1-icache-load-misses:u                                              (30.85%)
+   193,854,880,965      dTLB-loads:u                     #    1.000 G/sec                    (30.86%)
+       304,575,599      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.82%)
+     2,558,307,722      iTLB-loads:u                     #   13.200 M/sec                    (30.78%)
+       188,515,831      iTLB-load-misses:u               #    7.37% of all iTLB cache accesses  (30.84%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      70.229941649 seconds time elapsed
+
+     186.335894000 seconds user
+       8.656161000 seconds sys
+
+
+
+Run 4 for No Agent Modelling:
+# started on Tue Aug 20 07:06:56 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=False t_max=100000':
+
+        195,935.85 msec task-clock:u                     #    2.774 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           781,666      page-faults:u                    #    3.989 K/sec                  
+   666,513,739,311      cycles:u                         #    3.402 GHz                      (38.50%)
+   586,632,611,130      instructions:u                   #    0.88  insn per cycle           (46.32%)
+    98,068,537,206      branches:u                       #  500.514 M/sec                    (46.22%)
+     2,630,416,797      branch-misses:u                  #    2.68% of all branches          (46.34%)
+   194,274,260,521      L1-dcache-loads:u                #  991.520 M/sec                    (46.23%)
+    18,623,844,918      L1-dcache-load-misses:u          #    9.59% of all L1-dcache accesses  (46.29%)
+     4,340,027,309      LLC-loads:u                      #   22.150 M/sec                    (30.86%)
+       445,777,729      LLC-load-misses:u                #   10.27% of all LL-cache accesses  (30.85%)
+   <not supported>      L1-icache-loads:u                                           
+    25,411,665,956      L1-icache-load-misses:u                                              (30.85%)
+   194,401,110,933      dTLB-loads:u                     #  992.167 M/sec                    (30.85%)
+       310,471,075      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.82%)
+     2,535,252,054      iTLB-loads:u                     #   12.939 M/sec                    (30.87%)
+       406,563,746      iTLB-load-misses:u               #   16.04% of all iTLB cache accesses  (30.84%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      70.643911951 seconds time elapsed
+
+     188.942455000 seconds user
+       8.201768000 seconds sys
+
+
+
+Run 5 for No Agent Modelling:
+# started on Tue Aug 20 07:08:07 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=False t_max=100000':
+
+        196,796.88 msec task-clock:u                     #    2.731 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           696,249      page-faults:u                    #    3.538 K/sec                  
+   651,624,981,383      cycles:u                         #    3.311 GHz                      (38.40%)
+   587,050,698,663      instructions:u                   #    0.90  insn per cycle           (46.14%)
+    98,004,748,447      branches:u                       #  497.999 M/sec                    (46.12%)
+     2,611,531,538      branch-misses:u                  #    2.66% of all branches          (46.10%)
+   194,205,575,146      L1-dcache-loads:u                #  986.833 M/sec                    (46.12%)
+    18,421,015,407      L1-dcache-load-misses:u          #    9.49% of all L1-dcache accesses  (46.25%)
+     4,328,709,535      LLC-loads:u                      #   21.996 M/sec                    (30.73%)
+       443,583,923      LLC-load-misses:u                #   10.25% of all LL-cache accesses  (30.99%)
+   <not supported>      L1-icache-loads:u                                           
+    25,445,703,462      L1-icache-load-misses:u                                              (31.04%)
+   194,104,906,665      dTLB-loads:u                     #  986.321 M/sec                    (31.10%)
+       300,706,002      dTLB-load-misses:u               #    0.15% of all dTLB cache accesses  (30.99%)
+     2,569,117,183      iTLB-loads:u                     #   13.055 M/sec                    (30.85%)
+       182,779,318      iTLB-load-misses:u               #    7.11% of all iTLB cache accesses  (30.74%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      72.059197434 seconds time elapsed
+
+     189.662269000 seconds user
+       8.351360000 seconds sys
+
+
+
+Running Reward Reconstruction...
+Run 1 for Reward Reconstruction:
+# started on Tue Aug 20 07:09:19 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        206,322.44 msec task-clock:u                     #    2.486 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           491,853      page-faults:u                    #    2.384 K/sec                  
+   708,783,303,965      cycles:u                         #    3.435 GHz                      (38.59%)
+   642,602,468,024      instructions:u                   #    0.91  insn per cycle           (46.27%)
+   106,834,716,709      branches:u                       #  517.805 M/sec                    (46.33%)
+     2,844,950,473      branch-misses:u                  #    2.66% of all branches          (46.29%)
+   213,351,274,463      L1-dcache-loads:u                #    1.034 G/sec                    (46.35%)
+    20,029,700,582      L1-dcache-load-misses:u          #    9.39% of all L1-dcache accesses  (46.36%)
+     4,737,628,845      LLC-loads:u                      #   22.962 M/sec                    (30.85%)
+       461,105,474      LLC-load-misses:u                #    9.73% of all LL-cache accesses  (30.87%)
+   <not supported>      L1-icache-loads:u                                           
+    27,845,029,183      L1-icache-load-misses:u                                              (30.74%)
+   215,354,648,997      dTLB-loads:u                     #    1.044 G/sec                    (30.76%)
+       343,614,439      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.70%)
+     2,839,788,057      iTLB-loads:u                     #   13.764 M/sec                    (30.74%)
+       271,607,991      iTLB-load-misses:u               #    9.56% of all iTLB cache accesses  (30.89%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      82.983330465 seconds time elapsed
+
+     199.587548000 seconds user
+       7.949149000 seconds sys
+
+
+
+Run 2 for Reward Reconstruction:
+# started on Tue Aug 20 07:10:42 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        208,174.53 msec task-clock:u                     #    2.485 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           449,890      page-faults:u                    #    2.161 K/sec                  
+   704,570,514,582      cycles:u                         #    3.385 GHz                      (38.41%)
+   645,404,563,951      instructions:u                   #    0.92  insn per cycle           (46.06%)
+   106,783,015,843      branches:u                       #  512.949 M/sec                    (46.23%)
+     2,795,026,026      branch-misses:u                  #    2.62% of all branches          (46.33%)
+   213,628,025,268      L1-dcache-loads:u                #    1.026 G/sec                    (46.36%)
+    20,103,585,231      L1-dcache-load-misses:u          #    9.41% of all L1-dcache accesses  (46.42%)
+     4,742,945,219      LLC-loads:u                      #   22.784 M/sec                    (31.03%)
+       456,055,018      LLC-load-misses:u                #    9.62% of all LL-cache accesses  (30.97%)
+   <not supported>      L1-icache-loads:u                                           
+    27,743,633,991      L1-icache-load-misses:u                                              (30.86%)
+   215,184,158,029      dTLB-loads:u                     #    1.034 G/sec                    (30.76%)
+       352,002,309      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.63%)
+     2,838,330,552      iTLB-loads:u                     #   13.634 M/sec                    (30.64%)
+       216,213,140      iTLB-load-misses:u               #    7.62% of all iTLB cache accesses  (30.64%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      83.789089831 seconds time elapsed
+
+     201.522072000 seconds user
+       7.877959000 seconds sys
+
+
+
+Run 3 for Reward Reconstruction:
+# started on Tue Aug 20 07:12:06 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        207,957.35 msec task-clock:u                     #    2.479 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           508,033      page-faults:u                    #    2.443 K/sec                  
+   698,494,525,299      cycles:u                         #    3.359 GHz                      (38.47%)
+   645,395,397,509      instructions:u                   #    0.92  insn per cycle           (46.17%)
+   106,871,160,977      branches:u                       #  513.909 M/sec                    (46.23%)
+     2,777,778,078      branch-misses:u                  #    2.60% of all branches          (46.31%)
+   213,491,335,771      L1-dcache-loads:u                #    1.027 G/sec                    (46.39%)
+    19,841,255,780      L1-dcache-load-misses:u          #    9.29% of all L1-dcache accesses  (46.37%)
+     4,690,913,208      LLC-loads:u                      #   22.557 M/sec                    (30.89%)
+       456,800,586      LLC-load-misses:u                #    9.74% of all LL-cache accesses  (30.92%)
+   <not supported>      L1-icache-loads:u                                           
+    27,765,159,894      L1-icache-load-misses:u                                              (30.95%)
+   214,706,414,916      dTLB-loads:u                     #    1.032 G/sec                    (30.84%)
+       342,765,021      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.78%)
+     2,838,075,499      iTLB-loads:u                     #   13.647 M/sec                    (30.72%)
+       186,571,704      iTLB-load-misses:u               #    6.57% of all iTLB cache accesses  (30.69%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      83.876239395 seconds time elapsed
+
+     200.846565000 seconds user
+       8.341005000 seconds sys
+
+
+
+Run 4 for Reward Reconstruction:
+# started on Tue Aug 20 07:13:30 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        208,697.37 msec task-clock:u                     #    2.464 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           500,829      page-faults:u                    #    2.400 K/sec                  
+   703,375,231,092      cycles:u                         #    3.370 GHz                      (38.45%)
+   643,087,009,809      instructions:u                   #    0.91  insn per cycle           (46.16%)
+   106,852,357,539      branches:u                       #  511.997 M/sec                    (46.25%)
+     2,801,298,530      branch-misses:u                  #    2.62% of all branches          (46.31%)
+   214,544,220,245      L1-dcache-loads:u                #    1.028 G/sec                    (46.29%)
+    20,020,594,005      L1-dcache-load-misses:u          #    9.33% of all L1-dcache accesses  (46.23%)
+     4,749,033,686      LLC-loads:u                      #   22.756 M/sec                    (30.75%)
+       466,868,535      LLC-load-misses:u                #    9.83% of all LL-cache accesses  (30.90%)
+   <not supported>      L1-icache-loads:u                                           
+    27,604,960,238      L1-icache-load-misses:u                                              (30.91%)
+   213,739,695,638      dTLB-loads:u                     #    1.024 G/sec                    (30.94%)
+       349,382,518      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.85%)
+     2,859,801,873      iTLB-loads:u                     #   13.703 M/sec                    (30.75%)
+       219,476,100      iTLB-load-misses:u               #    7.67% of all iTLB cache accesses  (30.74%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      84.714839276 seconds time elapsed
+
+     201.697024000 seconds user
+       8.253906000 seconds sys
+
+
+
+Run 5 for Reward Reconstruction:
+# started on Tue Aug 20 07:14:54 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        208,767.16 msec task-clock:u                     #    2.488 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           515,447      page-faults:u                    #    2.469 K/sec                  
+   701,607,670,622      cycles:u                         #    3.361 GHz                      (38.61%)
+   645,524,443,578      instructions:u                   #    0.92  insn per cycle           (46.23%)
+   106,656,741,482      branches:u                       #  510.888 M/sec                    (46.17%)
+     2,794,232,699      branch-misses:u                  #    2.62% of all branches          (46.33%)
+   215,228,267,860      L1-dcache-loads:u                #    1.031 G/sec                    (46.20%)
+    20,220,078,389      L1-dcache-load-misses:u          #    9.39% of all L1-dcache accesses  (46.21%)
+     4,747,345,305      LLC-loads:u                      #   22.740 M/sec                    (30.74%)
+       457,151,218      LLC-load-misses:u                #    9.63% of all LL-cache accesses  (30.71%)
+   <not supported>      L1-icache-loads:u                                           
+    28,057,168,520      L1-icache-load-misses:u                                              (30.85%)
+   212,831,213,142      dTLB-loads:u                     #    1.019 G/sec                    (30.89%)
+       349,593,242      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.97%)
+     2,879,970,075      iTLB-loads:u                     #   13.795 M/sec                    (30.97%)
+       215,343,566      iTLB-load-misses:u               #    7.48% of all iTLB cache accesses  (30.89%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      83.925556059 seconds time elapsed
+
+     202.151697000 seconds user
+       7.832970000 seconds sys
+
+
+
+Running Action Reconstruction...
+Run 1 for Action Reconstruction:
+# started on Tue Aug 20 07:16:18 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        209,773.88 msec task-clock:u                     #    2.439 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           462,018      page-faults:u                    #    2.202 K/sec                  
+   705,338,475,107      cycles:u                         #    3.362 GHz                      (38.71%)
+   647,612,824,324      instructions:u                   #    0.92  insn per cycle           (46.38%)
+   107,929,702,076      branches:u                       #  514.505 M/sec                    (46.28%)
+     2,811,010,910      branch-misses:u                  #    2.60% of all branches          (46.20%)
+   216,531,989,359      L1-dcache-loads:u                #    1.032 G/sec                    (46.13%)
+    20,180,795,974      L1-dcache-load-misses:u          #    9.32% of all L1-dcache accesses  (46.22%)
+     4,763,756,372      LLC-loads:u                      #   22.709 M/sec                    (30.71%)
+       467,867,729      LLC-load-misses:u                #    9.82% of all LL-cache accesses  (30.76%)
+   <not supported>      L1-icache-loads:u                                           
+    27,932,961,997      L1-icache-load-misses:u                                              (30.88%)
+   215,697,288,941      dTLB-loads:u                     #    1.028 G/sec                    (30.89%)
+       341,314,056      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.98%)
+     2,872,968,543      iTLB-loads:u                     #   13.696 M/sec                    (30.97%)
+       218,171,853      iTLB-load-misses:u               #    7.59% of all iTLB cache accesses  (30.93%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      86.007661339 seconds time elapsed
+
+     202.509877000 seconds user
+       8.513142000 seconds sys
+
+
+
+Run 2 for Action Reconstruction:
+# started on Tue Aug 20 07:17:44 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        210,572.75 msec task-clock:u                     #    2.442 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           493,815      page-faults:u                    #    2.345 K/sec                  
+   701,737,577,811      cycles:u                         #    3.333 GHz                      (38.52%)
+   648,230,058,856      instructions:u                   #    0.92  insn per cycle           (46.23%)
+   107,831,297,839      branches:u                       #  512.086 M/sec                    (46.30%)
+     2,774,477,033      branch-misses:u                  #    2.57% of all branches          (46.24%)
+   216,211,156,829      L1-dcache-loads:u                #    1.027 G/sec                    (46.21%)
+    20,122,469,435      L1-dcache-load-misses:u          #    9.31% of all L1-dcache accesses  (46.30%)
+     4,720,940,036      LLC-loads:u                      #   22.420 M/sec                    (30.76%)
+       464,886,369      LLC-load-misses:u                #    9.85% of all LL-cache accesses  (30.90%)
+   <not supported>      L1-icache-loads:u                                           
+    27,951,047,217      L1-icache-load-misses:u                                              (30.87%)
+   215,596,850,908      dTLB-loads:u                     #    1.024 G/sec                    (30.79%)
+       339,005,230      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.84%)
+     2,885,725,010      iTLB-loads:u                     #   13.704 M/sec                    (30.86%)
+       213,807,131      iTLB-load-misses:u               #    7.41% of all iTLB cache accesses  (30.82%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      86.245579403 seconds time elapsed
+
+     203.443965000 seconds user
+       8.357376000 seconds sys
+
+
+
+Run 3 for Action Reconstruction:
+# started on Tue Aug 20 07:19:11 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        210,304.52 msec task-clock:u                     #    2.449 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           516,592      page-faults:u                    #    2.456 K/sec                  
+   709,108,971,591      cycles:u                         #    3.372 GHz                      (38.53%)
+   651,737,255,261      instructions:u                   #    0.92  insn per cycle           (46.23%)
+   108,168,928,298      branches:u                       #  514.344 M/sec                    (46.24%)
+     2,811,856,960      branch-misses:u                  #    2.60% of all branches          (46.14%)
+   215,655,550,812      L1-dcache-loads:u                #    1.025 G/sec                    (46.15%)
+    20,092,721,709      L1-dcache-load-misses:u          #    9.32% of all L1-dcache accesses  (46.29%)
+     4,781,689,898      LLC-loads:u                      #   22.737 M/sec                    (30.82%)
+       472,078,686      LLC-load-misses:u                #    9.87% of all LL-cache accesses  (30.86%)
+   <not supported>      L1-icache-loads:u                                           
+    28,076,369,725      L1-icache-load-misses:u                                              (30.91%)
+   216,469,183,291      dTLB-loads:u                     #    1.029 G/sec                    (30.76%)
+       357,669,670      dTLB-load-misses:u               #    0.17% of all dTLB cache accesses  (30.99%)
+     2,877,947,464      iTLB-loads:u                     #   13.685 M/sec                    (30.92%)
+       198,347,617      iTLB-load-misses:u               #    6.89% of all iTLB cache accesses  (30.86%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.865731960 seconds time elapsed
+
+     203.110290000 seconds user
+       8.436405000 seconds sys
+
+
+
+Run 4 for Action Reconstruction:
+# started on Tue Aug 20 07:20:36 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        212,505.58 msec task-clock:u                     #    2.455 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           511,537      page-faults:u                    #    2.407 K/sec                  
+   709,937,244,664      cycles:u                         #    3.341 GHz                      (38.59%)
+   650,664,483,893      instructions:u                   #    0.92  insn per cycle           (46.32%)
+   108,316,254,948      branches:u                       #  509.710 M/sec                    (46.20%)
+     2,818,344,800      branch-misses:u                  #    2.60% of all branches          (46.25%)
+   216,462,454,087      L1-dcache-loads:u                #    1.019 G/sec                    (46.22%)
+    20,303,466,839      L1-dcache-load-misses:u          #    9.38% of all L1-dcache accesses  (46.25%)
+     4,786,625,830      LLC-loads:u                      #   22.525 M/sec                    (30.80%)
+       469,059,306      LLC-load-misses:u                #    9.80% of all LL-cache accesses  (30.85%)
+   <not supported>      L1-icache-loads:u                                           
+    28,038,254,208      L1-icache-load-misses:u                                              (30.83%)
+   216,087,846,098      dTLB-loads:u                     #    1.017 G/sec                    (30.87%)
+       345,896,738      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.83%)
+     2,869,010,088      iTLB-loads:u                     #   13.501 M/sec                    (30.90%)
+       201,539,316      iTLB-load-misses:u               #    7.02% of all iTLB cache accesses  (30.83%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      86.545551683 seconds time elapsed
+
+     205.890354000 seconds user
+       7.852092000 seconds sys
+
+
+
+Run 5 for Action Reconstruction:
+# started on Tue Aug 20 07:22:03 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=True opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        208,292.06 msec task-clock:u                     #    2.440 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           530,931      page-faults:u                    #    2.549 K/sec                  
+   705,420,001,624      cycles:u                         #    3.387 GHz                      (38.46%)
+   649,702,711,212      instructions:u                   #    0.92  insn per cycle           (46.10%)
+   108,196,482,047      branches:u                       #  519.446 M/sec                    (46.12%)
+     2,800,108,447      branch-misses:u                  #    2.59% of all branches          (46.09%)
+   216,057,534,433      L1-dcache-loads:u                #    1.037 G/sec                    (46.18%)
+    20,161,880,868      L1-dcache-load-misses:u          #    9.33% of all L1-dcache accesses  (46.33%)
+     4,732,861,158      LLC-loads:u                      #   22.722 M/sec                    (30.90%)
+       464,721,863      LLC-load-misses:u                #    9.82% of all LL-cache accesses  (30.98%)
+   <not supported>      L1-icache-loads:u                                           
+    28,091,053,929      L1-icache-load-misses:u                                              (31.00%)
+   215,750,376,649      dTLB-loads:u                     #    1.036 G/sec                    (30.91%)
+       344,270,214      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.88%)
+     2,874,323,581      iTLB-loads:u                     #   13.799 M/sec                    (30.81%)
+       207,556,125      iTLB-load-misses:u               #    7.22% of all iTLB cache accesses  (30.71%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.379677221 seconds time elapsed
+
+     201.387348000 seconds user
+       8.124633000 seconds sys
+
+
+
+Running Observation Reconstruction...
+Run 1 for Observation Reconstruction:
+# started on Tue Aug 20 07:23:28 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        213,463.06 msec task-clock:u                     #    2.486 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           562,336      page-faults:u                    #    2.634 K/sec                  
+   704,192,834,067      cycles:u                         #    3.299 GHz                      (38.46%)
+   645,236,945,110      instructions:u                   #    0.92  insn per cycle           (46.24%)
+   106,953,520,335      branches:u                       #  501.040 M/sec                    (46.37%)
+     2,763,393,307      branch-misses:u                  #    2.58% of all branches          (46.31%)
+   214,254,069,570      L1-dcache-loads:u                #    1.004 G/sec                    (46.35%)
+    20,222,043,233      L1-dcache-load-misses:u          #    9.44% of all L1-dcache accesses  (46.32%)
+     4,762,401,581      LLC-loads:u                      #   22.310 M/sec                    (30.80%)
+       466,318,851      LLC-load-misses:u                #    9.79% of all LL-cache accesses  (30.95%)
+   <not supported>      L1-icache-loads:u                                           
+    27,720,859,333      L1-icache-load-misses:u                                              (30.92%)
+   214,195,021,778      dTLB-loads:u                     #    1.003 G/sec                    (30.74%)
+       344,780,215      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.74%)
+     2,857,498,957      iTLB-loads:u                     #   13.386 M/sec                    (30.62%)
+       268,853,552      iTLB-load-misses:u               #    9.41% of all iTLB cache accesses  (30.76%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.876185728 seconds time elapsed
+
+     206.383575000 seconds user
+       8.332430000 seconds sys
+
+
+
+Run 2 for Observation Reconstruction:
+# started on Tue Aug 20 07:24:54 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        208,328.73 msec task-clock:u                     #    2.448 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           515,774      page-faults:u                    #    2.476 K/sec                  
+   703,196,791,846      cycles:u                         #    3.375 GHz                      (38.52%)
+   642,629,559,388      instructions:u                   #    0.91  insn per cycle           (46.24%)
+   106,853,281,170      branches:u                       #  512.907 M/sec                    (46.18%)
+     2,776,073,285      branch-misses:u                  #    2.60% of all branches          (46.24%)
+   214,053,465,920      L1-dcache-loads:u                #    1.027 G/sec                    (46.24%)
+    19,997,325,891      L1-dcache-load-misses:u          #    9.34% of all L1-dcache accesses  (46.27%)
+     4,774,061,241      LLC-loads:u                      #   22.916 M/sec                    (30.82%)
+       464,852,399      LLC-load-misses:u                #    9.74% of all LL-cache accesses  (30.81%)
+   <not supported>      L1-icache-loads:u                                           
+    28,055,082,212      L1-icache-load-misses:u                                              (30.91%)
+   214,818,132,881      dTLB-loads:u                     #    1.031 G/sec                    (30.85%)
+       343,660,099      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.87%)
+     2,858,475,472      iTLB-loads:u                     #   13.721 M/sec                    (30.85%)
+       215,627,064      iTLB-load-misses:u               #    7.54% of all iTLB cache accesses  (30.83%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.101740067 seconds time elapsed
+
+     201.649860000 seconds user
+       7.914573000 seconds sys
+
+
+
+Run 3 for Observation Reconstruction:
+# started on Tue Aug 20 07:26:19 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        213,371.73 msec task-clock:u                     #    2.483 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           475,903      page-faults:u                    #    2.230 K/sec                  
+   709,377,999,923      cycles:u                         #    3.325 GHz                      (38.56%)
+   648,182,852,313      instructions:u                   #    0.91  insn per cycle           (46.28%)
+   107,795,589,319      branches:u                       #  505.201 M/sec                    (46.34%)
+     2,819,709,982      branch-misses:u                  #    2.62% of all branches          (46.20%)
+   216,510,974,194      L1-dcache-loads:u                #    1.015 G/sec                    (46.26%)
+    20,460,985,790      L1-dcache-load-misses:u          #    9.45% of all L1-dcache accesses  (46.24%)
+     4,769,942,236      LLC-loads:u                      #   22.355 M/sec                    (30.79%)
+       462,787,977      LLC-load-misses:u                #    9.70% of all LL-cache accesses  (30.84%)
+   <not supported>      L1-icache-loads:u                                           
+    27,903,971,146      L1-icache-load-misses:u                                              (30.78%)
+   214,880,751,092      dTLB-loads:u                     #    1.007 G/sec                    (30.78%)
+       351,857,525      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.90%)
+     2,887,722,489      iTLB-loads:u                     #   13.534 M/sec                    (30.85%)
+       267,473,756      iTLB-load-misses:u               #    9.26% of all iTLB cache accesses  (30.90%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.936744671 seconds time elapsed
+
+     206.233400000 seconds user
+       8.367461000 seconds sys
+
+
+
+Run 4 for Observation Reconstruction:
+# started on Tue Aug 20 07:27:45 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        209,974.88 msec task-clock:u                     #    2.469 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           583,264      page-faults:u                    #    2.778 K/sec                  
+   705,205,966,039      cycles:u                         #    3.359 GHz                      (38.70%)
+   644,687,707,458      instructions:u                   #    0.91  insn per cycle           (46.43%)
+   106,773,870,358      branches:u                       #  508.508 M/sec                    (46.31%)
+     2,794,008,249      branch-misses:u                  #    2.62% of all branches          (46.33%)
+   214,740,024,609      L1-dcache-loads:u                #    1.023 G/sec                    (46.23%)
+    20,168,748,242      L1-dcache-load-misses:u          #    9.39% of all L1-dcache accesses  (46.18%)
+     4,769,412,041      LLC-loads:u                      #   22.714 M/sec                    (30.68%)
+       454,755,514      LLC-load-misses:u                #    9.53% of all LL-cache accesses  (30.71%)
+   <not supported>      L1-icache-loads:u                                           
+    27,654,012,918      L1-icache-load-misses:u                                              (30.76%)
+   213,901,944,301      dTLB-loads:u                     #    1.019 G/sec                    (30.89%)
+       343,299,515      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.88%)
+     2,811,754,494      iTLB-loads:u                     #   13.391 M/sec                    (30.99%)
+       318,918,214      iTLB-load-misses:u               #   11.34% of all iTLB cache accesses  (30.92%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.036397558 seconds time elapsed
+
+     203.479638000 seconds user
+       7.734320000 seconds sys
+
+
+
+Run 5 for Observation Reconstruction:
+# started on Tue Aug 20 07:29:10 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=False latent_dims=32 t_max=100000':
+
+        211,490.91 msec task-clock:u                     #    2.447 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           492,402      page-faults:u                    #    2.328 K/sec                  
+   702,923,036,512      cycles:u                         #    3.324 GHz                      (38.69%)
+   647,613,060,613      instructions:u                   #    0.92  insn per cycle           (46.35%)
+   107,118,252,794      branches:u                       #  506.491 M/sec                    (46.33%)
+     2,770,884,458      branch-misses:u                  #    2.59% of all branches          (46.29%)
+   214,587,848,764      L1-dcache-loads:u                #    1.015 G/sec                    (46.29%)
+    20,027,762,048      L1-dcache-load-misses:u          #    9.33% of all L1-dcache accesses  (46.32%)
+     4,672,780,578      LLC-loads:u                      #   22.094 M/sec                    (30.79%)
+       456,568,664      LLC-load-misses:u                #    9.77% of all LL-cache accesses  (30.82%)
+   <not supported>      L1-icache-loads:u                                           
+    27,844,850,932      L1-icache-load-misses:u                                              (30.76%)
+   213,687,811,991      dTLB-loads:u                     #    1.010 G/sec                    (30.80%)
+       342,344,599      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.73%)
+     2,895,130,861      iTLB-loads:u                     #   13.689 M/sec                    (30.86%)
+       253,041,472      iTLB-load-misses:u               #    8.74% of all iTLB cache accesses  (30.86%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      86.431508902 seconds time elapsed
+
+     204.210922000 seconds user
+       8.538477000 seconds sys
+
+
+
+Running Combined Reconstruction...
+Run 1 for Combined Reconstruction:
+# started on Tue Aug 20 07:30:37 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        208,214.27 msec task-clock:u                     #    2.474 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           497,364      page-faults:u                    #    2.389 K/sec                  
+   701,868,283,229      cycles:u                         #    3.371 GHz                      (38.49%)
+   646,259,282,615      instructions:u                   #    0.92  insn per cycle           (46.21%)
+   107,197,918,623      branches:u                       #  514.844 M/sec                    (46.12%)
+     2,781,595,156      branch-misses:u                  #    2.59% of all branches          (46.14%)
+   216,058,041,925      L1-dcache-loads:u                #    1.038 G/sec                    (46.21%)
+    20,254,948,603      L1-dcache-load-misses:u          #    9.37% of all L1-dcache accesses  (46.12%)
+     4,751,837,329      LLC-loads:u                      #   22.822 M/sec                    (30.88%)
+       459,041,704      LLC-load-misses:u                #    9.66% of all LL-cache accesses  (30.93%)
+   <not supported>      L1-icache-loads:u                                           
+    27,683,375,436      L1-icache-load-misses:u                                              (30.95%)
+   213,630,748,944      dTLB-loads:u                     #    1.026 G/sec                    (30.99%)
+       344,594,379      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.89%)
+     2,817,416,336      iTLB-loads:u                     #   13.531 M/sec                    (30.90%)
+       200,570,709      iTLB-load-misses:u               #    7.12% of all iTLB cache accesses  (30.85%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      84.168599906 seconds time elapsed
+
+     201.093650000 seconds user
+       8.355611000 seconds sys
+
+
+
+Run 2 for Combined Reconstruction:
+# started on Tue Aug 20 07:32:01 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        211,585.60 msec task-clock:u                     #    2.465 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           497,325      page-faults:u                    #    2.350 K/sec                  
+   704,140,008,990      cycles:u                         #    3.328 GHz                      (38.58%)
+   646,757,840,323      instructions:u                   #    0.92  insn per cycle           (46.21%)
+   107,392,866,528      branches:u                       #  507.562 M/sec                    (46.17%)
+     2,792,397,882      branch-misses:u                  #    2.60% of all branches          (46.11%)
+   215,835,933,946      L1-dcache-loads:u                #    1.020 G/sec                    (46.14%)
+    20,119,459,094      L1-dcache-load-misses:u          #    9.32% of all L1-dcache accesses  (46.10%)
+     4,733,701,004      LLC-loads:u                      #   22.373 M/sec                    (30.95%)
+       468,611,324      LLC-load-misses:u                #    9.90% of all LL-cache accesses  (31.00%)
+   <not supported>      L1-icache-loads:u                                           
+    27,888,307,377      L1-icache-load-misses:u                                              (30.92%)
+   214,069,812,250      dTLB-loads:u                     #    1.012 G/sec                    (30.92%)
+       343,382,594      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.85%)
+     2,906,485,225      iTLB-loads:u                     #   13.737 M/sec                    (30.84%)
+       200,838,841      iTLB-load-misses:u               #    6.91% of all iTLB cache accesses  (30.92%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.845374971 seconds time elapsed
+
+     205.037361000 seconds user
+       7.775971000 seconds sys
+
+
+
+Run 3 for Combined Reconstruction:
+# started on Tue Aug 20 07:33:27 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        209,645.19 msec task-clock:u                     #    2.469 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           525,254      page-faults:u                    #    2.505 K/sec                  
+   704,274,847,947      cycles:u                         #    3.359 GHz                      (38.59%)
+   648,278,742,664      instructions:u                   #    0.92  insn per cycle           (46.29%)
+   107,575,780,456      branches:u                       #  513.133 M/sec                    (46.17%)
+     2,825,481,569      branch-misses:u                  #    2.63% of all branches          (46.28%)
+   216,002,136,199      L1-dcache-loads:u                #    1.030 G/sec                    (46.32%)
+    20,244,549,224      L1-dcache-load-misses:u          #    9.37% of all L1-dcache accesses  (46.36%)
+     4,774,268,042      LLC-loads:u                      #   22.773 M/sec                    (30.90%)
+       455,653,051      LLC-load-misses:u                #    9.54% of all LL-cache accesses  (30.79%)
+   <not supported>      L1-icache-loads:u                                           
+    27,807,145,636      L1-icache-load-misses:u                                              (30.74%)
+   214,628,945,932      dTLB-loads:u                     #    1.024 G/sec                    (30.82%)
+       346,582,529      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.84%)
+     2,859,889,304      iTLB-loads:u                     #   13.642 M/sec                    (30.96%)
+       210,049,231      iTLB-load-misses:u               #    7.34% of all iTLB cache accesses  (30.85%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      84.923149722 seconds time elapsed
+
+     202.399699000 seconds user
+       8.476248000 seconds sys
+
+
+
+Run 4 for Combined Reconstruction:
+# started on Tue Aug 20 07:34:52 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        210,373.40 msec task-clock:u                     #    2.464 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           508,778      page-faults:u                    #    2.418 K/sec                  
+   704,771,457,928      cycles:u                         #    3.350 GHz                      (38.59%)
+   646,527,373,547      instructions:u                   #    0.92  insn per cycle           (46.18%)
+   107,852,215,336      branches:u                       #  512.670 M/sec                    (46.20%)
+     2,806,688,650      branch-misses:u                  #    2.60% of all branches          (46.27%)
+   216,043,909,479      L1-dcache-loads:u                #    1.027 G/sec                    (46.24%)
+    20,275,792,706      L1-dcache-load-misses:u          #    9.39% of all L1-dcache accesses  (46.17%)
+     4,792,628,795      LLC-loads:u                      #   22.782 M/sec                    (30.92%)
+       462,078,327      LLC-load-misses:u                #    9.64% of all LL-cache accesses  (30.90%)
+   <not supported>      L1-icache-loads:u                                           
+    27,990,953,202      L1-icache-load-misses:u                                              (30.84%)
+   214,954,702,422      dTLB-loads:u                     #    1.022 G/sec                    (30.87%)
+       344,968,138      dTLB-load-misses:u               #    0.16% of all dTLB cache accesses  (30.80%)
+     2,877,048,692      iTLB-loads:u                     #   13.676 M/sec                    (30.90%)
+       195,572,490      iTLB-load-misses:u               #    6.80% of all iTLB cache accesses  (30.93%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.383375423 seconds time elapsed
+
+     203.285560000 seconds user
+       8.311591000 seconds sys
+
+
+
+Run 5 for Combined Reconstruction:
+# started on Tue Aug 20 07:36:17 2024
+
+
+ Performance counter stats for 'bash -c python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key='pz-mpe-simple-spread-v3' common_reward=False opponent_modelling=True opponent_model_decode_observations=True opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32 t_max=100000':
+
+        210,635.28 msec task-clock:u                     #    2.457 CPUs utilized          
+                 0      context-switches:u               #    0.000 /sec                   
+                 0      cpu-migrations:u                 #    0.000 /sec                   
+           503,553      page-faults:u                    #    2.391 K/sec                  
+   707,714,922,330      cycles:u                         #    3.360 GHz                      (38.58%)
+   648,096,924,105      instructions:u                   #    0.92  insn per cycle           (46.29%)
+   107,676,567,375      branches:u                       #  511.199 M/sec                    (46.19%)
+     2,816,962,240      branch-misses:u                  #    2.62% of all branches          (46.20%)
+   216,141,736,688      L1-dcache-loads:u                #    1.026 G/sec                    (46.11%)
+    20,275,340,535      L1-dcache-load-misses:u          #    9.38% of all L1-dcache accesses  (46.10%)
+     4,798,508,106      LLC-loads:u                      #   22.781 M/sec                    (30.74%)
+       462,970,317      LLC-load-misses:u                #    9.65% of all LL-cache accesses  (30.84%)
+   <not supported>      L1-icache-loads:u                                           
+    27,834,780,239      L1-icache-load-misses:u                                              (30.91%)
+   214,800,161,426      dTLB-loads:u                     #    1.020 G/sec                    (30.92%)
+       354,695,155      dTLB-load-misses:u               #    0.17% of all dTLB cache accesses  (30.98%)
+     2,872,034,562      iTLB-loads:u                     #   13.635 M/sec                    (30.86%)
+       234,845,832      iTLB-load-misses:u               #    8.18% of all iTLB cache accesses  (30.93%)
+   <not supported>      L1-dcache-prefetches:u                                      
+   <not supported>      L1-dcache-prefetch-misses:u                                   
+
+      85.739237719 seconds time elapsed
+
+     203.979299000 seconds user
+       7.901169000 seconds sys
+
+
+

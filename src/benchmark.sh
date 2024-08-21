@@ -1,5 +1,5 @@
-source /home/rsan/anaconda3/etc/profile.d/conda.sh
-conda activate am
+source /home/kitoo/anaconda3/etc/profile.d/conda.sh
+conda activate ipp
 
 hyperfine --export-json benchmark_results.json --warmup 3 --runs 5 \
           -n 'No Agent Modelling' 'python main.py --config=mappo --env-config=gymma with env_args.time_limit=25 env_args.key="pz-mpe-simple-spread-v3" common_reward=False opponent_modelling=False t_max=100000' \

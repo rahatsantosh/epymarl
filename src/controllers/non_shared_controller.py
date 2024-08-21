@@ -1,6 +1,5 @@
 from modules.agents import REGISTRY as agent_REGISTRY
 from components.action_selectors import REGISTRY as action_REGISTRY
-from modules.opponent_model.opponent_model import OpponentModelNS
 import torch as th
 
 class NonSharedMAC:
@@ -12,8 +11,8 @@ class NonSharedMAC:
         self.agent_output_type = args.agent_output_type
 
         # NOTE: Opponent Modelling Integration
-        if args.opponent_modelling: self.opponent_model = OpponentModelNS(scheme, args)
-        else: self.opponent_model = None
+        # if args.opponent_modelling: self.opponent_model = OpponentModelNS(scheme, args)
+        # else: self.opponent_model = None
 
         self.action_selector = action_REGISTRY[args.action_selector](args)
 

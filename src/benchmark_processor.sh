@@ -1,5 +1,5 @@
-source /home/rsan/anaconda3/etc/profile.d/conda.sh
-conda activate am
+source /home/kitoo/anaconda3/etc/profile.d/conda.sh
+conda activate ipp
 
 output_file="benchmark_results.txt"
 
