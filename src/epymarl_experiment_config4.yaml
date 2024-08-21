@@ -1,0 +1,47 @@
+exclude: null
+grid-search:
+
+  save_model:
+    - true
+
+  opponent_modelling:
+    - true
+    - false
+  
+  opponent_model_decode_observations:
+    - false
+  
+  opponent_model_decode_actions:
+    - true
+  
+  opponent_model_decode_rewards:
+    - true
+  
+  latent_dims:
+    - 10
+  
+  "--config":
+    - "mappo"
+    - "ippo"
+
+
+grid-search-groups:
+  env0:
+    - "--env-config": "gymma"
+    - env_args.time_limit: 25
+    - env_args.key: "pz-mpe-simple-spread-v3"
+    - common_reward: False
+    - t_max: 20050000
+    - test_interval: 250000
+    - log_interval: 100000
+    - save_model_interval: 5000000
+  
+  env1:
+    - "--env-config": "gymma"
+    - env_args.time_limit: 50
+    - env_args.key: "lbforaging:Foraging-2s-10x10-3p-3f-v3"
+    - common_reward: False
+    - t_max: 20050000
+    - test_interval: 250000
+    - log_interval: 100000
+    - save_model_interval: 5000000
