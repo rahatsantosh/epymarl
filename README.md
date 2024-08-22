@@ -13,6 +13,26 @@ EPyMARL is  an extension of [PyMARL](https://github.com/oxwhirl/pymarl), and inc
 
 See our blog post here: https://agents.inf.ed.ac.uk/blog/epymarl/
 
+### Autoencoder Reconstruction-Based Agent Modelling
+
+This repository adds a novel feature of **autoencoder reconstruction-based agent modelling** to the EPyMARL library. This technique allows for the modeling of opponents by reconstructing their observations, actions, and rewards through an autoencoder architecture. This repository is a fork of the EPyMARL library specifically to implement and evaluate this type of agent modelling.
+
+To run an experiment with autoencoder-based agent modelling, use the following command format:
+```sh
+python src/main.py --config=mappo --env-config=gymma with env_args.time_limit=50 env_args.key="lbforaging:Foraging-10x10-3p-3f-v3" common_reward=False opponent_modelling=True opponent_model_decode_observations=False opponent_model_decode_actions=False opponent_model_decode_rewards=True latent_dims=32
+```
+The above command format can be used with any of the implemented algorithms in the EPyMARL library, in the same format mentioned in the [Benchmark Paper Experiments](#benchmark-paper-experiments) section, with the additional arguments for opponent modelling.
+
+The arguments allow you to configure which aspects of the opponent's behavior are modeled:
+```
+opponent_modelling=True: Enables opponent modelling.
+opponent_model_decode_observations: If True, the model will attempt to reconstruct the observations of the opponents.
+opponent_model_decode_actions: If True, the model will attempt to reconstruct the actions of the opponents.
+opponent_model_decode_rewards: If True, the model will attempt to reconstruct the rewards of the opponents.
+latent_dims: Specifies the dimensionality of the latent space in the autoencoder.
+```
+This setup allows for flexible and scalable integration of agent modeling into multi-agent reinforcement learning (MARL) tasks, particularly useful in environments with dynamic opponent behaviors.
+
 ## Update as of *July 2024*!
 
 ### Update to Gymnasium
