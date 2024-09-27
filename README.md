@@ -1,21 +1,8 @@
-# Extended Python MARL framework - EPyMARL
-
-EPyMARL is  an extension of [PyMARL](https://github.com/oxwhirl/pymarl), and includes
-- **New!** Support for training in environments with individual rewards for all agents (for all algorithms that support such settings)
-- **New!** Updated EPyMARL to use maintained [Gymnasium](https://gymnasium.farama.org/index.html) library instead of deprecated OpenAI Gym version 0.21.
-- **New!** Support for new environments: native integration of [PettingZoo](https://pettingzoo.farama.org/), [matrix games](https://github.com/uoe-agents/matrix-games), [SMACv2](https://github.com/oxwhirl/smacv2), and [SMAClite](https://github.com/uoe-agents/smaclite)
-- **New!** Support for logging to [weights and biases (W&B)](https://wandb.ai/)
-- **New!** We added a simple plotting script to visualise run data
-- Additional algorithms (IA2C, IPPO, MADDPG, MAA2C and MAPPO)
-- Option for no-parameter sharing between agents (original PyMARL only allowed for parameter sharing)
-- Flexibility with extra implementation details (e.g. hard/soft updates, reward standarization, and more)
-- Consistency of implementations between different algorithms (fair comparisons)
-
-See our blog post here: https://agents.inf.ed.ac.uk/blog/epymarl/
-
 ### Autoencoder Reconstruction-Based Agent Modelling
+**20th August 2024**
+This repository adds a novel feature of **autoencoder reconstruction-based agent modelling** to the (EPyMARL library)[https://github.com/uoe-agents/epymarl/tree/main]. This technique allows for the modeling of opponents by reconstructing their observations, actions, and rewards through an autoencoder architecture. This repository is a fork of the EPyMARL library specifically to implement and evaluate this type of agent modelling.
 
-This repository adds a novel feature of **autoencoder reconstruction-based agent modelling** to the EPyMARL library. This technique allows for the modeling of opponents by reconstructing their observations, actions, and rewards through an autoencoder architecture. This repository is a fork of the EPyMARL library specifically to implement and evaluate this type of agent modelling.
+This work has been done as part of the dissertation (Integrating Agent Modelling in Multi-Agent Reinforcement Learning Algorithms)[https://agents.inf.ed.ac.uk/blog/master-dissertations/rsantosh_msc2024.pdf]
 
 To run an experiment with autoencoder-based agent modelling, use the following command format:
 ```sh
@@ -32,6 +19,21 @@ opponent_model_decode_rewards: If True, the model will attempt to reconstruct th
 latent_dims: Specifies the dimensionality of the latent space in the autoencoder.
 ```
 This setup allows for flexible and scalable integration of agent modeling into multi-agent reinforcement learning (MARL) tasks, particularly useful in environments with dynamic opponent behaviors.
+# Extended Python MARL framework - EPyMARL
+
+EPyMARL is  an extension of [PyMARL](https://github.com/oxwhirl/pymarl), and includes
+- **New!** Support for training in environments with individual rewards for all agents (for all algorithms that support such settings)
+- **New!** Updated EPyMARL to use maintained [Gymnasium](https://gymnasium.farama.org/index.html) library instead of deprecated OpenAI Gym version 0.21.
+- **New!** Support for new environments: native integration of [PettingZoo](https://pettingzoo.farama.org/), [matrix games](https://github.com/uoe-agents/matrix-games), [SMACv2](https://github.com/oxwhirl/smacv2), and [SMAClite](https://github.com/uoe-agents/smaclite)
+- **New!** Support for logging to [weights and biases (W&B)](https://wandb.ai/)
+- **New!** We added a simple plotting script to visualise run data
+- Additional algorithms (IA2C, IPPO, MADDPG, MAA2C and MAPPO)
+- Option for no-parameter sharing between agents (original PyMARL only allowed for parameter sharing)
+- Flexibility with extra implementation details (e.g. hard/soft updates, reward standarization, and more)
+- Consistency of implementations between different algorithms (fair comparisons)
+
+See our blog post here: https://agents.inf.ed.ac.uk/blog/epymarl/
+
 
 ## Update as of *July 2024*!
 
