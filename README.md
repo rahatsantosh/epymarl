@@ -1,8 +1,8 @@
 ### Autoencoder Reconstruction-Based Agent Modelling
 **20th August 2024**
-This repository adds a novel feature of **autoencoder reconstruction-based agent modelling** to the (EPyMARL library)[https://github.com/uoe-agents/epymarl/tree/main]. This technique allows for the modeling of opponents by reconstructing their observations, actions, and rewards through an autoencoder architecture. This repository is a fork of the EPyMARL library specifically to implement and evaluate this type of agent modelling.
+This repository adds a novel feature of **autoencoder reconstruction-based agent modelling** to the [EPyMARL library](https://github.com/uoe-agents/epymarl/tree/main). This technique allows for the modeling of opponents by reconstructing their observations, actions, and rewards through an autoencoder architecture. This repository is a fork of the EPyMARL library specifically to implement and evaluate this type of agent modelling.
 
-This work has been done as part of the dissertation (Integrating Agent Modelling in Multi-Agent Reinforcement Learning Algorithms)[https://agents.inf.ed.ac.uk/blog/master-dissertations/rsantosh_msc2024.pdf]
+This work has been done as part of the dissertation [Integrating Agent Modelling in Multi-Agent Reinforcement Learning Algorithms](https://agents.inf.ed.ac.uk/blog/master-dissertations/rsantosh_msc2024.pdf)
 
 To run an experiment with autoencoder-based agent modelling, use the following command format:
 ```sh
